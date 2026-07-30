@@ -1,0 +1,150 @@
+{% extends "dash_base.html" %}
+{% load static %}
+{% block title %}Mint NFT — Mintique{% endblock %}
+{% block page_eyebrow %}NFTs{% endblock %}
+{% block page_title %}Create NFT{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">✦ Core Feature</span>
+    <h2>Mint Your <span class="grad-text">Digital Asset</span></h2>
+    <p>Upload your artwork, fill in the details, and receive a cryptographically unique Token ID — your proof of ownership, forever.</p>
+    <p class="muted mt-8"><a href="{% url 'nftapp:batch_mint' %}">Minting more than one? Try batch mint →</a></p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="mint-grid" data-wallet-gate data-validate novalidate>
+    {% csrf_token %}
+    <div>
+      <div class="field">
+        <label>Upload Artwork *</label>
+        <div class="dropzone">
+          {{ form.image }}
+          <img class="preview-img" alt="preview">
+          <div class="dz-icon">🖼</div>
+          <div class="dz-text">Drop your artwork here</div>
+          <p class="muted mt-8">PNG, JPG, GIF, SVG, WebP up to 50MB</p>
+          <span class="muted mt-8" style="text-decoration:underline; display:inline-block;">Browse Files</span>
+        </div>
+        {% if form.image.errors %}<div class="error">{{ form.image.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label>NFT Name *</label>
+        {{ form.name }}
+      </div>
+      <div class="field">
+        <label>Creator Name *</label>
+        {{ form.creator_name }}
+      </div>
+      <div class="field">
+        <label>Description</label>
+        {{ form.description }}
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Category</label>
+          {{ form.category }}
+        </div>
+        <div class="field">
+          <label>Price</label>
+          <div style="display:flex; gap:8px;">
+            {{ form.price }}
+            <div style="flex:0 0 130px;">{{ form.currency }}</div>
+          </div>
+          <div class="mt-8" style="display:flex; align-items:center; gap:10px; font-size:0.8rem;">
+            <span class="muted">Suggested: <b id="suggestedPriceLabel">—</b> <span id="suggestedPriceCurrency">ETH</span></span>
+            <button type="button" class="btn btn-outline" id="useSuggestedPriceBtn" style="padding:4px 12px; font-size:0.78rem;">Use suggested</button>
+          </div>
+          {% if form.price.errors %}<div class="error">{{ form.price.errors.0 }}</div>{% endif %}
+          {% if form.currency.errors %}<div class="error">{{ form.currency.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Collection (optional)</label>
+          {{ form.collection }}
+        </div>
+        <div class="field">
+          <label>{{ form.royalty_percentage.label }}</label>
+          {{ form.royalty_percentage }}
+        </div>
+      </div>
+      <div class="field">
+        <label>{{ form.is_lazy_minted }} {{ form.is_lazy_minted.label }}</label>
+      </div>
+      <div class="field">
+        <label>{{ form.traits.label }}</label>
+        {{ form.traits }}
+        {% if form.traits.errors %}<div class="error">{{ form.traits.errors.0 }}</div>{% endif %}
+        <p class="muted mt-8" style="font-size:0.78rem;">{{ form.traits.help_text }}</p>
+      </div>
+      <button type="submit" class="btn btn-gradient btn-block btn-lg">✦ Mint NFT</button>
+      <p class="muted center mt-16" style="font-size:0.85rem;">
+        {% if user.has_wallet %}
+          Wallet connected: <span class="mono">{{ user.wallet_address|slice:":6" }}…{{ user.wallet_address|slice:"-4:" }}</span>
+        {% else %}
+          You'll be asked to connect a wallet before this mints.
+        {% endif %}
+      </p>
+    </div>
+
+    <div>
+      <div class="card">
+        <h3 style="font-size:1.1rem;"># How Token Generation Works</h3>
+        <div class="steps-list mt-24">
+          <div class="step-item s1"><span class="step-num">01</span><div><h4>Upload &amp; Validate</h4><p>Your artwork is cryptographically hashed</p></div></div>
+          <div class="step-item s2"><span class="step-num">02</span><div><h4>Mint on Chain</h4><p>Ledger registers ownership instantly</p></div></div>
+          <div class="step-item s3"><span class="step-num">03</span><div><h4>Token Assignment</h4><p>A globally unique token ID (UUID v4) and a scannable QR verification code are generated</p></div></div>
+          <div class="step-item s4"><span class="step-num">04</span><div><h4>Certified &amp; Immutable</h4><p>Your token ID is permanently recorded forever</p></div></div>
+        </div>
+      </div>
+
+      <div class="card mt-24">
+        <h3 style="font-size:1.1rem;">✨ Token Preview</h3>
+        <div class="token-preview-box">
+          <div class="label">YOUR TOKEN WILL LOOK LIKE</div>
+          <div class="value">xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx</div>
+          <div class="label mt-8" style="text-transform:none; letter-spacing:0; font-size:0.72rem;">UUID version 4 — cryptographically random, checked against every token ever minted.</div>
+        </div>
+        <div class="pill-row">
+          <div class="pill">Unique</div>
+          <div class="pill">Verifiable</div>
+          <div class="pill">Immutable</div>
+          <div class="pill">+ QR Code</div>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>
+
+{% include "walletapp/_wallet_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>document.body.dataset.walletConnected = "{% if user.has_wallet %}true{% else %}false{% endif %}";</script>
+<script src="{% static 'js/wallet.js' %}"></script>
+<script>
+  (function() {
+    const suggestedPrices = JSON.parse('{{ suggested_prices_json|escapejs }}');
+    const categorySelect = document.getElementById("id_category");
+    const priceInput = document.getElementById("id_price");
+    const currencySelect = document.getElementById("id_currency");
+    const label = document.getElementById("suggestedPriceLabel");
+    const currencyLabel = document.getElementById("suggestedPriceCurrency");
+    const useBtn = document.getElementById("useSuggestedPriceBtn");
+    if (!categorySelect || !priceInput || !label || !useBtn) return;
+
+    function currentSuggestion() {
+      return suggestedPrices[categorySelect.value] ?? 0.05;
+    }
+    function updateLabel() {
+      label.textContent = currentSuggestion();
+      if (currencyLabel && currencySelect) currencyLabel.textContent = currencySelect.value;
+    }
+    categorySelect.addEventListener("change", updateLabel);
+    currencySelect?.addEventListener("change", updateLabel);
+    useBtn.addEventListener("click", () => { priceInput.value = currentSuggestion(); });
+    updateLabel();
+  })();
+</script>
+{% endblock %}

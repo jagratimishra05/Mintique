@@ -1,0 +1,36 @@
+{% comment %}
+Reusable NFT card. Context vars:
+  nft            - required, an NFT instance
+  show_wishlist  - optional bool, show the wishlist toggle button
+  wishlisted_ids - optional set of NFT pks the current user has wishlisted
+{% endcomment %}
+<div class="nft-card-wrap">
+  <a href="{{ nft.get_absolute_url }}" class="nft-card">
+    <div class="thumb">
+      <span class="badge badge-token token-tag">{{ nft.token_id_display|default:"Not yet minted" }}</span>
+      {% if nft.is_burned %}<span class="badge burned-badge">🔥 Burned</span>
+      {% elif nft.is_lazy_minted and not nft.lazy_minted_at %}<span class="badge lazy-badge">⏳ Lazy Mint</span>{% endif %}
+      <img src="{{ nft.image.url }}" alt="{{ nft.name }}">
+    </div>
+    <div class="body">
+      <div class="row">
+        <b>{{ nft.name }}</b>
+        {% if nft.is_verified %}<span class="badge badge-verified">✓</span>{% endif %}
+      </div>
+      <span class="muted">by {{ nft.creator_name }}</span>
+      <div class="row mt-16">
+        <span class="price">{{ nft.price }} {{ nft.currency }}</span>
+        <span class="likes">♥ {{ nft.likes }}</span>
+      </div>
+    </div>
+  </a>
+  {% if show_wishlist and user.is_authenticated %}
+  <form method="post" action="{% url 'nftapp:toggle_wishlist' nft.pk %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <button type="submit" class="wishlist-btn {% if nft.pk in wishlisted_ids %}active{% endif %}">
+      {% if nft.pk in wishlisted_ids %}★ Wishlisted{% else %}☆ Wishlist{% endif %}
+    </button>
+  </form>
+  {% endif %}
+</div>

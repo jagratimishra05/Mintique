@@ -1,0 +1,9 @@
+Django>=5.0,<5.3
+Pillow>=10.0
+qrcode>=7.4
+reportlab>=4.0
+python-dotenv>=1.0
+requests>=2.31
+whitenoise>=6.6
+dnspython>=2.4
+web3>=6.0,<7

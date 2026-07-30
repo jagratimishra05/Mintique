@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ collection.name }} — Mintique{% endblock %}
+{% block content %}
+<section class="section">
+  {% if collection.banner_image %}
+    <div style="max-width:1280px; margin:0 auto 32px; border-radius:var(--radius-lg); overflow:hidden; height:220px;">
+      <img src="{{ collection.banner_image.url }}" alt="{{ collection.name }}" style="width:100%; height:100%; object-fit:cover;">
+    </div>
+  {% endif %}
+
+  <div class="section-title-row">
+    <div>
+      <div class="creator-badge-row">
+        <h2 style="margin:0;">{{ collection.name }}</h2>
+        {% if collection.is_verified %}<span class="badge badge-verified">✓ Verified</span>{% endif %}
+      </div>
+      <p class="muted mt-8">
+        by <a href="{% url 'nftapp:creator_profile' collection.owner.username %}">{{ collection.owner.first_name|default:collection.owner.username }}</a>
+        · {{ collection.nft_count }} item{{ collection.nft_count|pluralize }}
+        {% if collection.floor_price %} · Floor: {{ collection.floor_price }} ETH{% endif %}
+      </p>
+    </div>
+  </div>
+  {% if collection.description %}<p class="muted" style="max-width:720px;">{{ collection.description }}</p>{% endif %}
+
+  {% if nfts %}
+  <div class="grid-3 mt-24">
+    {% for nft in nfts %}
+      {% include "nftapp/_nft_card.html" with nft=nft show_wishlist=True wishlisted_ids=wishlisted_ids %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="ico">✦</div>
+    <h3>No items in this collection yet</h3>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

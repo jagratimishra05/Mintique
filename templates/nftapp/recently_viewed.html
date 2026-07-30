@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Recently Viewed — Mintique{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-title-row">
+    <h2>Recently <span class="grad-text">Viewed</span></h2>
+    <a href="{% url 'nftapp:marketplace' %}" class="btn btn-outline">Browse Marketplace</a>
+  </div>
+  <div class="subnav">
+    <a href="{% url 'nftapp:wishlist' %}">Wishlist</a>
+    <a href="{% url 'nftapp:favorites' %}">Favorites</a>
+    <a href="{% url 'nftapp:recently_viewed' %}" class="active">Recently Viewed</a>
+  </div>
+
+  {% if nfts %}
+  <div class="grid-3 mt-24">
+    {% for nft in nfts %}
+      {% include "nftapp/_nft_card.html" with nft=nft show_wishlist=True wishlisted_ids=wishlisted_ids %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="ico">👁</div>
+    <h3>Nothing viewed yet</h3>
+    <p>NFTs you look at will show up here so you can find your way back to them.</p>
+    <a href="{% url 'nftapp:marketplace' %}" class="btn btn-gradient btn-lg">Browse Marketplace</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

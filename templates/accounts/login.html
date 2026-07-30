@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Sign In — Mintique{% endblock %}
+{% block content %}
+<div class="auth-shell">
+  <div class="auth-box">
+    <div class="auth-head">
+      <h1>Welcome back</h1>
+      <p>Sign in to access your NFT dashboard</p>
+    </div>
+    <div class="auth-card">
+      <div class="social-auth-grid">
+        <a href="{% url 'accounts:google_login' %}" class="social-btn google" title="{% if not google_auth_enabled %}Not configured yet — falls back to a notice{% endif %}">
+          <span class="social-ico">🇬</span> Google
+        </a>
+        <button type="button" class="social-btn metamask" onclick="authConnectMetaMask()">
+          <span class="social-ico">🦊</span> MetaMask
+        </button>
+        <button type="button" class="social-btn" onclick="authConnectCoinbaseWallet()">
+          <span class="social-ico">🔵</span> Coinbase Wallet
+        </button>
+        <button type="button" class="social-btn" onclick="authConnectTrustWallet()">
+          <span class="social-ico">🛡️</span> Trust Wallet
+        </button>
+        <button type="button" class="social-btn walletconnect" onclick="authConnectWalletConnect()">
+          <span class="social-ico">🔗</span> WalletConnect
+        </button>
+      </div>
+      <p style="text-align:center; margin-top:10px;"><a href="#" class="forgot-link" onclick="event.preventDefault(); openAuthWalletModal();">Other wallet options</a></p>
+      <div class="auth-divider">or sign in with email</div>
+      <form method="post" data-validate novalidate>
+        {% csrf_token %}
+        <div class="field">
+          <label for="id_username">Email Address</label>
+          <div class="input-icon-wrap">
+            <span class="ico">✉</span>
+            {{ form.username }}
+          </div>
+        </div>
+        <div class="field">
+          <div class="row" style="display:flex; justify-content:space-between; align-items:center;">
+            <label for="id_password" style="margin-bottom:0;">Password</label>
+            <a href="{% url 'accounts:forgot_password' %}" class="forgot-link">Forgot password?</a>
+          </div>
+          <div class="input-icon-wrap" style="margin-top:9px;">
+            <span class="ico">🔒</span>
+            {{ form.password }}
+            <button type="button" class="password-toggle">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gradient btn-block btn-lg">→] Sign In</button>
+      </form>
+      <p class="auth-switch">Don't have an account? <a href="{% url 'accounts:register' %}">Create account</a></p>
+    </div>
+    <a href="{% url 'home' %}" class="back-link">✦ Back to Mintique</a>
+  </div>
+</div>
+
+{% include "accounts/_wallet_auth_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

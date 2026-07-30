@@ -1,0 +1,66 @@
+{% extends "dash_base.html" %}
+{% block title %}Sell NFTs — Mintique{% endblock %}
+{% block page_eyebrow %}Marketplace{% endblock %}
+{% block page_title %}Sell NFTs{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <div>
+    <p>Put NFTs you own up for sale, or manage the ones already listed on the marketplace.</p>
+  </div>
+  <div class="page-head-actions">
+    <a href="{% url 'nftapp:my_collection' %}" class="btn btn-outline btn-sm">View My NFTs</a>
+    <a href="{% url 'nftapp:mint' %}" class="btn btn-gradient btn-sm">+ Mint NFT</a>
+  </div>
+</div>
+
+<div class="sell-section-head">
+  <h3>Ready to list</h3>
+  <span class="count">{{ unlisted_count }} item{{ unlisted_count|pluralize }}</span>
+</div>
+{% if unlisted_items %}
+<div class="sell-grid">
+  {% for nft, pf in unlisted_items %}
+  <div class="sell-card">
+    <a href="{{ nft.get_absolute_url }}" class="thumb"><img src="{{ nft.image.url }}" alt="{{ nft.name }}"></a>
+    <div class="body">
+      <b>{{ nft.name }}</b>
+      <form method="post" action="{% url 'nftapp:list_for_sale' nft.pk %}" class="list-form">
+        {% csrf_token %}
+        {{ pf.price }}
+        {{ pf.currency }}
+        <button type="submit" class="btn btn-gradient btn-sm">List</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="sell-empty">You don't have any unlisted NFTs right now — mint a new one, or unlist something below to relist it at a new price.</div>
+{% endif %}
+
+<div class="sell-section-head">
+  <h3>Currently listed</h3>
+  <span class="count">{{ listed_nfts|length }} item{{ listed_nfts|length|pluralize }}</span>
+</div>
+{% if listed_nfts %}
+<div class="sell-grid">
+  {% for nft in listed_nfts %}
+  <div class="sell-card">
+    <a href="{{ nft.get_absolute_url }}" class="thumb"><img src="{{ nft.image.url }}" alt="{{ nft.name }}"></a>
+    <div class="body">
+      <b>{{ nft.name }}</b>
+      <span class="listed-price">Listed at {{ nft.price }} {{ nft.currency }}</span>
+      <form method="post" action="{% url 'nftapp:unlist' nft.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline btn-sm btn-block">Remove from sale</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="sell-empty">Nothing listed yet — list an NFT above to put it in front of buyers on the marketplace.</div>
+{% endif %}
+
+{% endblock %}

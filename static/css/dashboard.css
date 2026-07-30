@@ -1,0 +1,349 @@
+/* =========================================================
+   MINTIQUE — DASHBOARD SHELL
+   Premium black-and-gold app layout: persistent sidebar,
+   topbar, and the account/marketplace pages it wraps.
+   Scoped entirely under body.dash-app so the public marketing
+   site keeps its existing violet/magenta identity untouched.
+   ========================================================= */
+
+:root{ --dash-header-h: 76px; --dash-row-h: 78px; }
+
+body.dash-app{
+  /* ---- native site theme: same values as :root in style.css, so the
+     whole dashboard area (sidebar, topbar, and every page it wraps)
+     now matches the public marketing site's violet/magenta/cyan
+     identity instead of the old gold reskin. ---- */
+  --purple: #a855f7;
+  --purple-2: #c084fc;
+  --magenta: #ec4899;
+  --magenta-2: #f472b6;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --violet: var(--purple);
+  --blue: var(--magenta);
+  --amber: var(--cyan);
+  --pink: var(--magenta);
+  --gold: var(--cyan);
+  --grad-primary: linear-gradient(90deg, #a855f7, #ec4899);
+  --grad-primary-hover: linear-gradient(90deg, #b96bfa, #f15fa0);
+
+  --bg: #08070c;
+  --bg-soft: #0d0b14;
+  --surface: #141119;
+  --surface-2: #1c1826;
+  --surface-hover: #241f32;
+  --border: rgba(255,255,255,0.09);
+  --border-strong: rgba(255,255,255,0.17);
+  --text: #f5f3f9;
+  --text-dim: #a8a3b8;
+  --text-faint: #746f87;
+  --input-bg: #110f17;
+  --input-text: #f5f3f9;
+  --input-placeholder: #6c6780;
+  --shadow-color: 0,0,0;
+  --grad-radial:
+    radial-gradient(circle at 18% -8%, rgba(168,85,247,0.22), transparent 45%),
+    radial-gradient(circle at 92% 4%, rgba(236,72,153,0.15), transparent 42%);
+  --spot-color: 168,85,247;
+
+  background:var(--bg) var(--grad-radial);
+  background-attachment:fixed;
+}
+[data-theme="light"] body.dash-app{
+  --bg: #f8f7fb;
+  --bg-soft: #f0eef6;
+  --surface: #ffffff;
+  --surface-2: #f5f3fa;
+  --surface-hover: #ece7f7;
+  --border: rgba(30,15,45,0.09);
+  --border-strong: rgba(30,15,45,0.17);
+  --text: #150f1f;
+  --text-dim: #554f68;
+  --text-faint: #86809b;
+  --input-bg: #ffffff;
+  --input-text: #150f1f;
+  --input-placeholder: #9892ac;
+  --shadow-color: 45,20,70;
+  --grad-radial:
+    radial-gradient(circle at 18% -8%, rgba(168,85,247,0.12), transparent 45%),
+    radial-gradient(circle at 92% 4%, rgba(236,72,153,0.09), transparent 42%);
+  --spot-color: 168,85,247;
+}
+body.dash-app .badge-verified{ color:#150f1f; background:rgba(168,85,247,0.18); border-color:rgba(168,85,247,0.4); }
+body.dash-app ::selection{ background:rgba(168,85,247,0.35); }
+body.dash-app ::-webkit-scrollbar-thumb:hover{ background:var(--purple); }
+
+/* ---------------- APP SHELL ---------------- */
+.dash-app-shell{ display:flex; min-height:calc(100vh - var(--dash-header-h)); }
+
+/* ---------------- SIDEBAR ---------------- */
+.dash-sidebar{
+  width:264px; flex-shrink:0; position:sticky; top:var(--dash-header-h); height:calc(100vh - var(--dash-header-h));
+  display:flex; flex-direction:column;
+  background:linear-gradient(180deg, var(--surface), var(--bg-soft));
+  border-right:1px solid var(--border);
+  transition:width var(--dur) var(--ease), transform var(--dur) var(--ease);
+  z-index:120;
+}
+.dash-sidebar-head{
+  display:flex; align-items:center; gap:11px; padding:0 20px; height:var(--dash-row-h); box-sizing:border-box;
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.dash-sidebar-head .brand-mark{ flex-shrink:0; filter:drop-shadow(0 4px 14px rgba(212,175,106,0.35)); }
+.dash-sidebar-head .brand-name{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; color:var(--text); letter-spacing:-0.01em; }
+.dash-sidebar-head .brand-name b{ color:var(--purple); }
+.dash-sidebar-collapse{
+  margin-left:auto; width:28px; height:28px; border-radius:8px; border:1px solid var(--border);
+  background:transparent; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+}
+.dash-sidebar-collapse:hover{ border-color:var(--purple); color:var(--purple); }
+
+.dash-nav{ flex:1; overflow-y:auto; padding:14px 12px; display:flex; flex-direction:column; gap:2px; }
+.dash-nav-group-label{
+  font-size:0.66rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint);
+  padding:16px 12px 6px;
+}
+.dash-nav-group-label:first-child{ padding-top:6px; }
+
+.dash-nav-item{
+  position:relative; display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:10px;
+  color:var(--text-dim); font-weight:500; font-size:0.9rem; transition:background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), padding var(--dur-fast);
+  white-space:nowrap; overflow:hidden;
+}
+.dash-nav-item svg{ flex-shrink:0; width:18px; height:18px; opacity:0.85; transition:opacity var(--dur-fast), transform var(--dur-fast); }
+.dash-nav-item .label{ overflow:hidden; text-overflow:ellipsis; }
+.dash-nav-item:hover{ background:var(--surface-hover); color:var(--text); }
+.dash-nav-item:hover svg{ transform:translateX(1px); }
+.dash-nav-item.active{
+  background:linear-gradient(90deg, rgba(212,175,106,0.16), rgba(212,175,106,0.02));
+  color:var(--text); font-weight:600;
+}
+.dash-nav-item.active svg{ opacity:1; color:var(--purple); }
+.dash-nav-item.active::before{
+  content:''; position:absolute; left:-12px; top:6px; bottom:6px; width:3px; border-radius:0 4px 4px 0;
+  background:var(--grad-primary); box-shadow:0 0 12px rgba(212,175,106,0.6);
+}
+.dash-nav-item.danger:hover{ background:rgba(251,91,91,0.1); color:var(--red); }
+
+.dash-nav-divider{ height:1px; background:var(--border); margin:10px 8px; flex-shrink:0; }
+
+.dash-sidebar-foot{
+  padding:14px; border-top:1px solid var(--border); flex-shrink:0;
+}
+.dash-user-card{
+  display:flex; align-items:center; gap:10px; padding:8px; border-radius:12px;
+  transition:background var(--dur-fast); cursor:pointer;
+}
+.dash-user-card:hover{ background:var(--surface-hover); }
+.dash-user-card .avatar-lg{
+  width:38px; height:38px; border-radius:11px; flex-shrink:0; background:var(--grad-primary);
+  display:flex; align-items:center; justify-content:center; font-weight:700; color:#161208; overflow:hidden;
+}
+.dash-user-card .avatar-lg img{ width:100%; height:100%; object-fit:cover; }
+.dash-user-card .who{ min-width:0; overflow:hidden; }
+.dash-user-card .who b{ display:block; font-size:0.85rem; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dash-user-card .who span{ display:block; font-size:0.72rem; color:var(--text-faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* Collapsed state (desktop) */
+.dash-app-shell.collapsed .dash-sidebar{ width:76px; }
+.dash-app-shell.collapsed .dash-sidebar-head .brand-name,
+.dash-app-shell.collapsed .dash-nav-group-label,
+.dash-app-shell.collapsed .dash-nav-item .label,
+.dash-app-shell.collapsed .dash-user-card .who{ display:none; }
+.dash-app-shell.collapsed .dash-sidebar-head{ justify-content:center; padding:0; }
+.dash-app-shell.collapsed .dash-sidebar-collapse{ margin-left:0; }
+.dash-app-shell.collapsed .dash-nav-item{ justify-content:center; }
+.dash-app-shell.collapsed .dash-nav-item.active::before{ left:-12px; }
+.dash-app-shell.collapsed .dash-sidebar-collapse svg{ transform:rotate(180deg); }
+.dash-app-shell.collapsed .dash-user-card{ justify-content:center; }
+
+/* ---------------- TOPBAR ----------------
+   Page-local context bar: sidebar toggle + page title + one
+   contextual action. Site-wide nav/theme/wallet/account now
+   live once in the shared header (partials/_header.html). */
+.dash-topbar{
+  position:sticky; top:var(--dash-header-h); z-index:90; display:flex; align-items:center; gap:16px;
+  height:var(--dash-row-h); box-sizing:border-box; padding:0 28px;
+  background:var(--nav-bg-scrolled, rgba(10,9,8,0.86)); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.dash-topbar-burger{
+  display:none; width:38px; height:38px; border-radius:10px; border:1px solid var(--border); background:var(--surface);
+  color:var(--text); align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
+}
+.dash-topbar-title{ min-width:0; }
+.dash-topbar-title .eyebrow-sm{ display:block; font-size:0.7rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--purple); }
+.dash-topbar-title h1{ font-size:1.18rem; font-family:var(--font-display); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dash-topbar-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+
+/* ---------------- CONTENT ---------------- */
+.dash-app-shell{ width:100%; }
+.dash-main-col{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.dash-content{ flex:1; padding:28px; max-width:1440px; width:100%; margin:0 auto; opacity:0; animation:dashContentIn .5s var(--ease) forwards; }
+@keyframes dashContentIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+
+.dash-scrim{
+  display:none; position:fixed; inset:0; background:rgba(5,4,2,0.6); z-index:110;
+  opacity:0; transition:opacity var(--dur) var(--ease);
+}
+.dash-scrim.show{ display:block; opacity:1; }
+
+@media (max-width: 980px){
+  .dash-sidebar{
+    position:fixed; left:0; top:0; height:100vh; transform:translateX(-100%); width:270px; box-shadow:var(--shadow-lg);
+  }
+  .dash-app-shell.mobile-open .dash-sidebar{ transform:translateX(0); }
+  .dash-topbar-burger{ display:flex; }
+  .dash-sidebar-collapse{ display:none; }
+  .dash-content{ padding:18px; }
+  .dash-topbar{ height:auto; min-height:var(--dash-row-h); padding:14px 16px; }
+}
+
+/* =========================================================
+   PAGE HEADER (reusable across dashboard pages)
+   ========================================================= */
+.page-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+.page-head h2{ font-size:1.5rem; }
+.page-head p{ color:var(--text-dim); margin-top:4px; font-size:0.92rem; }
+.page-head-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+/* =========================================================
+   SELL NFTs PAGE
+   ========================================================= */
+.sell-section-head{ display:flex; align-items:center; justify-content:space-between; margin:26px 0 14px; }
+.sell-section-head h3{ font-size:1.02rem; }
+.sell-section-head .count{ font-family:var(--font-mono); font-size:0.75rem; color:var(--text-faint); }
+.sell-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:16px; }
+.sell-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;
+  transition:border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.sell-card:hover{ border-color:var(--purple); transform:translateY(-3px); box-shadow:0 14px 30px rgba(212,175,106,0.12); }
+.sell-card .thumb{ aspect-ratio:1; overflow:hidden; }
+.sell-card .thumb img{ width:100%; height:100%; object-fit:cover; }
+.sell-card .body{ padding:14px; display:flex; flex-direction:column; gap:10px; }
+.sell-card .body b{ font-size:0.92rem; }
+.sell-card .listed-price{ font-family:var(--font-mono); color:var(--purple-2); font-size:0.85rem; }
+.sell-card .list-form{ display:flex; gap:6px; }
+.sell-card .list-form input{ flex:1; min-width:0; }
+.sell-card .list-form select{ width:78px; flex-shrink:0; }
+.sell-empty{
+  border:1px dashed var(--border-strong); border-radius:var(--radius); padding:36px 20px; text-align:center;
+  color:var(--text-dim); font-size:0.9rem;
+}
+
+/* =========================================================
+   PROFILE / EDIT PROFILE / SETTINGS
+   ========================================================= */
+.profile-hero{
+  display:flex; align-items:center; gap:20px; padding:26px; border-radius:var(--radius-lg);
+  background:linear-gradient(135deg, var(--surface), var(--surface-2)); border:1px solid var(--border); margin-bottom:22px; flex-wrap:wrap;
+}
+.profile-hero .avatar-xl{
+  width:84px; height:84px; border-radius:20px; flex-shrink:0; background:var(--grad-primary);
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:2rem; color:#161208; overflow:hidden;
+  box-shadow:0 12px 30px rgba(212,175,106,0.3);
+}
+.profile-hero .avatar-xl img{ width:100%; height:100%; object-fit:cover; }
+.profile-hero .info{ min-width:0; flex:1; }
+.profile-hero .info h2{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.profile-hero .info p.muted{ margin-top:4px; }
+.profile-hero .info .bio{ margin-top:10px; color:var(--text-dim); font-size:0.9rem; max-width:52ch; }
+.profile-hero-actions{ display:flex; gap:10px; flex-shrink:0; }
+
+.profile-stats-row{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:22px; }
+@media (max-width:780px){ .profile-stats-row{ grid-template-columns:repeat(2, 1fr); } }
+
+.settings-grid{ display:grid; gap:16px; max-width:720px; }
+.settings-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 22px; }
+.settings-card h4{ font-size:0.98rem; margin-bottom:4px; }
+.settings-card .desc{ color:var(--text-dim); font-size:0.84rem; margin-bottom:16px; }
+.settings-row{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 0;
+  border-top:1px solid var(--border);
+}
+.settings-row:first-of-type{ border-top:none; padding-top:0; }
+.settings-row .label b{ display:block; font-size:0.88rem; }
+.settings-row .label span{ display:block; font-size:0.78rem; color:var(--text-faint); margin-top:2px; }
+
+.theme-switch{
+  position:relative; width:50px; height:28px; border-radius:999px; background:var(--surface-2); border:1px solid var(--border-strong);
+  cursor:pointer; flex-shrink:0; transition:background var(--dur-fast);
+}
+.theme-switch .knob{
+  position:absolute; top:2px; left:2px; width:22px; height:22px; border-radius:50%; background:var(--grad-primary);
+  transition:transform var(--dur) var(--ease-spring);
+}
+[data-theme="light"] .theme-switch .knob{ transform:translateX(22px); }
+
+/* =========================================================
+   DASHBOARD OVERVIEW PAGE
+   Single source of truth for this page's layout — previously
+   split (and duplicated/conflicting) across style.css and this
+   file. Everything the Overview page needs lives here now.
+   ========================================================= */
+.dash-shell{ display:flex; flex-direction:column; gap:20px; }
+
+.subnav-compact{display:flex; gap:8px; flex-wrap:wrap;}
+.subnav-compact a{padding:6px 13px; border-radius:999px; border:1px solid var(--border); color:var(--text-dim); font-size:0.78rem; font-weight:600; white-space:nowrap; transition:border-color var(--dur-fast), color var(--dur-fast);}
+.subnav-compact a:hover{border-color:var(--purple); color:var(--text);}
+
+.dash-stats-row{display:grid; grid-template-columns:repeat(6, 1fr); gap:12px;}
+
+.dash-main-grid{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; align-items:start; }
+
+.dash-charts-panel{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.mini-chart-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:18px 20px 14px; min-height:210px; display:flex; flex-direction:column;
+  transition:border-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.mini-chart-card:hover{ border-color:var(--border-strong); box-shadow:var(--shadow-sm); }
+.mini-chart-card h4{ font-size:0.95rem; font-family:var(--font-display); }
+.mini-chart-card .chart-sub{ font-size:0.75rem; color:var(--text-faint); margin-top:2px; margin-bottom:6px; }
+.mini-chart-card .chart-wrap{ min-height:150px; flex:1; position:relative; }
+
+.dash-side-panel{ display:flex; flex-direction:column; gap:12px; }
+.dash-panel-box{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:18px 20px; min-height:220px; max-height:400px; display:flex; flex-direction:column;
+  transition:border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.dash-panel-box:hover{ border-color:var(--border-strong); box-shadow:var(--shadow-sm); }
+.dash-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; flex-shrink:0; }
+.dash-panel-head h3{ font-size:0.98rem; font-family:var(--font-display); }
+.dash-panel-head a{ font-size:0.78rem; color:var(--text-dim); font-weight:600; transition:color var(--dur-fast); white-space:nowrap; }
+.dash-panel-head a:hover{ color:var(--purple); }
+.dash-panel-scroll{overflow-y:auto; flex:1; min-height:0;}
+
+.mini-nft-row{display:flex; align-items:center; gap:10px; padding:7px 4px; border-radius:8px; border:1px solid transparent; transition:background var(--dur-fast), border-color var(--dur-fast); text-decoration:none;}
+.mini-nft-row:hover{background:var(--surface-hover); border-color:var(--border);}
+.mini-nft-row img{width:36px; height:36px; border-radius:8px; object-fit:cover; flex-shrink:0; border:1px solid var(--border);}
+.mini-nft-row .info{min-width:0; flex:1;}
+.mini-nft-row .info b{font-size:0.8rem; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text);}
+.mini-nft-row .info span{font-size:0.72rem; color:var(--text-faint);}
+.mini-nft-row .badge{font-size:0.65rem; padding:3px 8px; flex-shrink:0;}
+
+.mini-tx-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 4px; border-bottom:1px solid var(--border); font-size:0.78rem;}
+.mini-tx-row:last-child{border-bottom:none;}
+.mini-tx-row .tx-type{font-size:0.66rem; padding:2px 8px;}
+.mini-tx-row .muted{color:var(--text-faint); font-size:0.72rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:140px;}
+
+.dash-empty-mini{text-align:center; padding:18px 10px; color:var(--text-dim); font-size:0.82rem;}
+.dash-empty-mini a{font-weight:700;}
+
+@media (max-width:1100px){
+  .dash-stats-row{grid-template-columns:repeat(3, 1fr);}
+  .dash-main-grid{ grid-template-columns:1fr; }
+}
+@media (max-width:640px){
+  .dash-stats-row{grid-template-columns:repeat(2, 1fr);}
+  .dash-charts-panel{ grid-template-columns:1fr; }
+}
+
+
+@media (prefers-reduced-motion: reduce){
+  .dash-content{ animation:none; opacity:1; }
+  .dash-sidebar, .dash-nav-item, .sell-card{ transition:none; }
+}

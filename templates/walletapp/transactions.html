@@ -1,0 +1,37 @@
+{% extends "dash_base.html" %}
+{% block title %}Transaction History — Mintique{% endblock %}
+{% block page_eyebrow %}Wallet{% endblock %}
+{% block page_title %}Activity{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head" style="text-align:left; margin-bottom:30px;">
+    <span class="eyebrow">✦ Activity</span>
+    <h2>Transaction <span class="grad-text">History</span></h2>
+  </div>
+
+  {% if txs %}
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table class="tx-table">
+      <thead><tr><th>Type</th><th>Details</th><th>Amount</th><th>Tx Hash</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for tx in txs %}
+        <tr>
+          <td><span class="tx-type {{ tx.tx_type }}">{{ tx.get_tx_type_display }}</span></td>
+          <td class="muted">{{ tx.note }}</td>
+          <td class="mono">{{ tx.amount }} {{ tx.token }}</td>
+          <td class="mono muted">{{ tx.tx_hash|slice:":10" }}…</td>
+          <td class="muted">{{ tx.created_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="ico">📜</div>
+    <h3>No transactions yet</h3>
+    <p>Mint, buy, or swap to see your activity here.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

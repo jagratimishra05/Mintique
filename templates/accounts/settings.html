@@ -1,0 +1,74 @@
+{% extends "dash_base.html" %}
+{% block title %}Settings — Mintique{% endblock %}
+{% block page_eyebrow %}Account{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block content %}
+
+<div class="settings-grid">
+
+  <div class="settings-card">
+    <h4>Appearance</h4>
+    <p class="desc">Choose how Mintique looks on this device.</p>
+    <div class="settings-row" style="border-top:none; padding-top:0;">
+      <div class="label"><b>Dark theme</b><span>Switch between the dark and light interface</span></div>
+      <button type="button" class="theme-switch" id="settingsThemeSwitch" aria-label="Toggle dark / light theme">
+        <span class="knob"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h4>Wallet</h4>
+    <p class="desc">The wallet connected to your Mintique account for minting and buying.</p>
+    <div class="settings-row" style="border-top:none; padding-top:0;">
+      <div class="label">
+        <b>{{ user.wallet_address|default:"No wallet connected" }}</b>
+        <span>{% if user.wallet_connected_at %}Connected {{ user.wallet_connected_at|date:"M j, Y" }}{% else %}Connect one from Mint, Buy, or the Wallet page{% endif %}</span>
+      </div>
+      {% if user.wallet_address %}
+        <a href="{% url 'walletapp:disconnect' %}" class="btn btn-outline btn-sm">Disconnect</a>
+      {% else %}
+        <a href="{% url 'walletapp:swap' %}" class="btn btn-gradient btn-sm">Go to Wallet</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h4>Security</h4>
+    <p class="desc">Keep your account secure.</p>
+    <div class="settings-row" style="border-top:none; padding-top:0;">
+      <div class="label"><b>Password</b><span>Reset your password by email</span></div>
+      <a href="{% url 'accounts:forgot_password' %}" class="btn btn-outline btn-sm">Reset password</a>
+    </div>
+    <div class="settings-row">
+      <div class="label"><b>Email verification</b><span>{% if user.is_email_verified %}Your email is verified{% else %}Your email isn't verified yet{% endif %}</span></div>
+      {% if user.is_email_verified %}
+        <span class="badge badge-verified">Verified</span>
+      {% else %}
+        <a href="{% url 'accounts:verify_email_pending' %}" class="btn btn-outline btn-sm">Verify now</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h4>Account</h4>
+    <p class="desc">Manage your public profile and personal details.</p>
+    <div class="settings-row" style="border-top:none; padding-top:0;">
+      <div class="label"><b>Profile information</b><span>Name, bio, and avatar</span></div>
+      <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline btn-sm">Edit profile</a>
+    </div>
+    <div class="settings-row">
+      <div class="label"><b>Sign out</b><span>End your session on this device</span></div>
+      <a href="{% url 'accounts:logout' %}" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const sw = document.getElementById("settingsThemeSwitch");
+  sw?.addEventListener("click", () => document.getElementById("themeToggle")?.click());
+});
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "dash_base.html" %}
+{% block title %}Edit Profile — Mintique{% endblock %}
+{% block page_eyebrow %}Account{% endblock %}
+{% block page_title %}Edit Profile{% endblock %}
+{% block content %}
+<div class="section" style="max-width:640px; margin:0 auto; padding:0;">
+  <div class="card">
+    <form method="post" enctype="multipart/form-data" data-validate novalidate>
+      {% csrf_token %}
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          {{ form.first_name }}
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          {{ form.last_name }}
+        </div>
+      </div>
+      <div class="field">
+        <label>Bio</label>
+        {{ form.bio }}
+      </div>
+      <div class="field">
+        <label>Avatar</label>
+        {{ form.avatar }}
+      </div>
+      <div class="field">
+        <label>Wallet Address</label>
+        <input type="text" value="{{ user.wallet_address|default:'Not connected — connect one from Mint or Buy' }}" disabled>
+      </div>
+      {% if user.wallet_address %}
+      <div class="field">
+        <label>On-Chain Balance</label>
+        <input type="text" id="onchainBalanceField" value="Checking Polygon…" disabled>
+      </div>
+      {% endif %}
+      <div style="display:flex; gap:10px;">
+        <button type="submit" class="btn btn-gradient btn-block">Save Changes</button>
+        <a href="{% url 'accounts:profile' %}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% if user.wallet_address %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const field = document.getElementById("onchainBalanceField");
+  if (!field) return;
+  fetch("{% url 'walletapp:onchain_balance' %}")
+    .then((res) => res.json())
+    .then((data) => {
+      field.value = data.ok
+        ? `${data.balance} ${data.symbol} — ${data.network}`
+        : (data.error || "Unavailable");
+    })
+    .catch(() => { field.value = "Unavailable"; });
+});
+</script>
+{% endif %}
+{% endblock %}

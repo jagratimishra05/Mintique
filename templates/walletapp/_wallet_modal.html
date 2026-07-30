@@ -1,0 +1,39 @@
+<div class="modal-overlay" id="walletModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeWalletModal()">&times;</button>
+    <div class="wicon">👛</div>
+    <h3>Connect your wallet</h3>
+    <p>Minting and buying on Mintique requires a connected wallet. This only takes a second.</p>
+
+    <div class="wallet-option" onclick="connectMetaMask()">
+      <span class="wallet-option-label"><span>🦊</span> MetaMask</span>
+      <svg class="ext-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </div>
+    <div class="wallet-option" onclick="connectCoinbaseWallet()">
+      <span class="wallet-option-label"><span>🔵</span> Coinbase Wallet</span>
+      <svg class="ext-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </div>
+    <div class="wallet-option" onclick="connectTrustWallet()">
+      <span class="wallet-option-label"><span>🛡️</span> Trust Wallet</span>
+      <svg class="ext-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </div>
+    <div class="wallet-option" onclick="connectWalletConnect()">
+      <span class="wallet-option-label"><span>🔗</span> WalletConnect</span>
+      <svg class="ext-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </div>
+    <div class="wallet-option" onclick="connectDemoWallet()">
+      <span class="wallet-option-label"><span>🧪</span> Use Demo Wallet (no extension needed)</span>
+    </div>
+    <div class="wallet-option" onclick="showManualWalletInput()">
+      <span class="wallet-option-label"><span>✍️</span> Enter Address Manually</span>
+    </div>
+
+    <div class="manual-wallet-input" id="manualWalletInput">
+      <div class="field">
+        <label>Wallet Address</label>
+        <input type="text" id="manualAddressField" placeholder="0x...">
+      </div>
+      <button class="btn btn-gradient btn-block" onclick="submitManualWallet()">Connect</button>
+    </div>
+  </div>
+</div>

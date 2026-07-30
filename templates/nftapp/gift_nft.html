@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Gift {{ nft.name }} — Mintique{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">🎁 Gift NFT</span>
+    <h2>Gift <span class="grad-text">{{ nft.name }}</span></h2>
+    <p>Transfer ownership to another Mintique account — no payment, no fees.</p>
+  </div>
+
+  <div class="card" style="max-width:520px; margin:0 auto;">
+    <div class="row" style="gap:16px; align-items:center; margin-bottom:24px;">
+      <img src="{{ nft.image.url }}" alt="{{ nft.name }}" style="width:72px; height:72px; border-radius:12px; object-fit:cover;">
+      <div>
+        <b>{{ nft.name }}</b>
+        <div class="muted" style="font-size:0.85rem;">{{ nft.token_id_display|default:"Not yet minted on-chain" }}</div>
+      </div>
+    </div>
+    <form method="post" data-wallet-gate novalidate>
+      {% csrf_token %}
+      <div class="field">
+        <label>{{ form.recipient_email.label }}</label>
+        {{ form.recipient_email }}
+        {% if form.recipient_email.errors %}<div class="error">{{ form.recipient_email.errors.0 }}</div>{% endif %}
+      </div>
+      <button type="submit" class="btn btn-gradient btn-block btn-lg">🎁 Send Gift</button>
+      <a href="{{ nft.get_absolute_url }}" class="btn btn-ghost btn-block mt-16">Cancel</a>
+    </form>
+  </div>
+</section>
+
+{% include "walletapp/_wallet_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>document.body.dataset.walletConnected = "{% if user.has_wallet %}true{% else %}false{% endif %}";</script>
+<script src="{% static 'js/wallet.js' %}"></script>
+{% endblock %}

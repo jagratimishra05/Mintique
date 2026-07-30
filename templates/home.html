@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow">✦ Next-Gen NFT Platform</span>
+      <h1 class="mt-16">
+        <span class="grad-text">Mint. Verify.</span><br>
+        Own Digital<br>
+        <span class="cyan-text">Assets.</span>
+      </h1>
+      <p class="lead">The world's first NFT Minting &amp; Authentication Platform — every asset receives a globally unique cryptographic Token ID, proving ownership forever.</p>
+
+      <div class="hero-cta">
+        <a href="{% url 'nftapp:marketplace' %}" class="btn btn-gradient btn-lg">Explore NFTs →</a>
+        <a href="{% url 'nftapp:mint' %}" class="btn btn-outline btn-lg">✦ Mint NFT</a>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><b>{{ stats.minted|default:"25K+" }}</b><span>NFTs Minted</span></div>
+        <div class="stat"><b>{{ stats.collectors|default:"15K+" }}</b><span>Collectors</span></div>
+        <div class="stat"><b>{{ stats.creators|default:"500+" }}</b><span>Creators</span></div>
+      </div>
+      <div class="trust-row">
+        <span>🛡 Verified</span><span># Unique ID</span><span>⚡ Instant</span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="float-card card-a">
+        <img src="https://images.unsplash.com/photo-1633355444132-695d5876cd00?w=400" alt="Cosmic Drift NFT artwork">
+        <div class="fc-body"><b>Cosmic Drift #047</b><div class="fc-price">2.4 ETH</div></div>
+      </div>
+      <div class="float-card card-b">
+        <img src="https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400" alt="Digital Soul NFT artwork">
+        <div class="fc-body"><b>Digital Soul #091</b><div class="fc-price">4.2 ETH</div></div>
+      </div>
+      <div class="mint-counter"><span class="pulse"></span> 1,248 minted today</div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    {% for i in "12" %}
+      {% for token in recent_tokens %}
+        <div class="ticker-item"><span class="dot"></span>Minted <b>{{ token }}</b></div>
+      {% endfor %}
+      {% if not recent_tokens %}
+        <div class="ticker-item"><span class="dot"></span><b>{{ stats.minted|default:"25,000+" }}</b> assets verified on Mintique</div>
+        <div class="ticker-item"><span class="dot"></span><b>{{ stats.creators|default:"500+" }}</b> creators onboard</div>
+        <div class="ticker-item"><span class="dot"></span>Every token comes with a scannable QR certificate</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<div class="category-row">
+  {% for c in categories %}
+    <a href="{% url 'nftapp:marketplace' %}?category={{ c.key }}" class="category-chip">
+      <span class="cat-ico">{{ c.icon }}</span>
+      <span>
+        <span class="cat-label" style="display:block;">{{ c.label }}</span>
+        <span class="cat-count">{{ c.count }} item{{ c.count|pluralize }}</span>
+      </span>
+    </a>
+  {% endfor %}
+</div>
+
+{% if trending %}
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">✦ Trending Now</span>
+    <h2>Trending <span class="grad-text">Collections</span></h2>
+    <p>Each with a cryptographically verified Mintique Token ID.</p>
+  </div>
+  <div class="grid-3">
+    {% for nft in trending %}
+    <a href="{{ nft.get_absolute_url }}" class="nft-card">
+      <div class="thumb">
+        <span class="badge badge-token token-tag">{{ nft.token_id_display|default:"Not yet minted" }}</span>
+        <img src="{{ nft.image.url }}" alt="{{ nft.name }}">
+      </div>
+      <div class="body">
+        <div class="row"><b>{{ nft.name }}</b> <span class="badge badge-verified">✓</span></div>
+        <span class="muted">by {{ nft.creator_name }}</span>
+        <div class="row mt-16">
+          <span class="price">{{ nft.price }} ETH</span>
+          <span class="likes">♥ {{ nft.likes }}</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">✦ Why Mintique</span>
+    <h2>Built for the <span class="grad-text">Future of Ownership</span></h2>
+    <p>Everything you need to create, verify, and trade digital assets with confidence.</p>
+  </div>
+  <div class="grid-4">
+    <div class="feature-card c1">
+      <div class="icon">🛡</div>
+      <h3>Secure Authentication</h3>
+      <p>Military-grade cryptography ensures every NFT's authenticity is verifiable and tamper-proof on-chain.</p>
+    </div>
+    <div class="feature-card c2">
+      <div class="icon">#</div>
+      <h3>Unique Token ID</h3>
+      <p>Every asset receives a globally unique MNQ Token — your permanent, immutable certificate of digital ownership.</p>
+    </div>
+    <div class="feature-card c3">
+      <div class="icon">⚡</div>
+      <h3>Instant Minting</h3>
+      <p>Mint your digital artwork in seconds. Optimized pipeline, zero friction, wallet only needed at the final step.</p>
+    </div>
+    <div class="feature-card c4">
+      <div class="icon">⇄</div>
+      <h3>Built-in Token Swap</h3>
+      <p>Swap between ETH and MNQ instantly inside your dashboard — no external exchange required.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="newsletter">
+    <div class="mail-ico">✉</div>
+    <span class="eyebrow">✦ Stay in the Loop</span>
+    <h2>Get Early Access &amp; <span class="grad-text">Exclusive Drops</span></h2>
+    <p>Subscribe to receive exclusive NFT drops, platform updates, creator spotlights, and early access to new features before anyone else.</p>
+    <form class="newsletter-form" data-validate>
+      <input type="email" placeholder="your@email.com" required>
+      <button type="submit" class="btn btn-gradient">Subscribe →</button>
+    </form>
+    <p class="fine">No spam, ever. Unsubscribe anytime. 15,000+ subscribers.</p>
+  </div>
+</section>
+
+{% endblock %}

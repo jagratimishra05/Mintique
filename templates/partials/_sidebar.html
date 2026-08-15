@@ -1,0 +1,97 @@
+{% load static %}
+{% with vn=request.resolver_match.view_name %}
+<aside class="dash-sidebar" id="dashSidebar">
+  <div class="dash-sidebar-head">
+    <span class="brand-mark">
+      <svg width="30" height="30" viewBox="0 0 34 34" fill="none">
+        <defs>
+          <linearGradient id="sbg" x1="2" y1="2" x2="32" y2="32">
+            <stop offset="0" stop-color="#f0cf8a"/>
+            <stop offset="1" stop-color="#b8863c"/>
+          </linearGradient>
+        </defs>
+        <path d="M17 2 L31 12 L26.5 30 L7.5 30 L3 12 Z" fill="url(#sbg)"/>
+        <path d="M17 2 L17 30 M3 12 L31 12 M7.5 30 L17 12 L26.5 30" stroke="#161208" stroke-opacity="0.22" stroke-width="1"/>
+        <path d="M11 15.5l4.2 4.2L23.5 11" stroke="#161208" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="brand-name">Mint<b>ique</b></span>
+    <button class="dash-sidebar-collapse" id="sidebarCollapseBtn" type="button" aria-label="Collapse sidebar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+  </div>
+
+  <nav class="dash-nav">
+    <div class="dash-nav-group-label">Overview</div>
+    <a href="{% url 'nftapp:dashboard' %}" class="dash-nav-item {% if vn == 'nftapp:dashboard' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      <span class="label">Dashboard</span>
+    </a>
+
+    <div class="dash-nav-group-label">NFTs</div>
+    <a href="{% url 'nftapp:my_collection' %}" class="dash-nav-item {% if vn == 'nftapp:my_collection' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5.2-5.2a2 2 0 0 0-2.8 0L4 20"/></svg>
+      <span class="label">My NFTs</span>
+    </a>
+    <a href="{% url 'nftapp:mint' %}" class="dash-nav-item {% if vn == 'nftapp:mint' or vn == 'nftapp:batch_mint' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>
+      <span class="label">Create NFT</span>
+    </a>
+    <a href="{% url 'nftapp:collection_list' %}" class="dash-nav-item {% if vn == 'nftapp:collection_list' or vn == 'nftapp:collection_detail' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span class="label">Collections</span>
+    </a>
+
+    <div class="dash-nav-group-label">Marketplace</div>
+    <a href="{% url 'nftapp:marketplace' %}" class="dash-nav-item {% if vn == 'nftapp:marketplace' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 7v13a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7l-3-5H6Z"/><path d="M3 7h18M9 11a3 3 0 0 0 6 0"/></svg>
+      <span class="label">Buy NFTs</span>
+    </a>
+    <a href="{% url 'nftapp:sell' %}" class="dash-nav-item {% if vn == 'nftapp:sell' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.6 12.6 20.6a2 2 0 0 1-2.8 0l-7.4-7.4a2 2 0 0 1 0-2.8L10.4 2.4a2 2 0 0 1 1.4-.6H19a2 2 0 0 1 2 2v6.8a2 2 0 0 1-.4 1.4Z"/><circle cx="15.5" cy="7.5" r="1.5"/></svg>
+      <span class="label">Sell NFTs</span>
+    </a>
+
+    <div class="dash-nav-group-label">Wallet</div>
+    <a href="{% url 'walletapp:swap' %}" class="dash-nav-item {% if vn == 'walletapp:swap' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7H5a2 2 0 0 1 0-4h13a1 1 0 0 1 1 1v3Z"/><path d="M3 7v11a2 2 0 0 0 2 2h16v-6"/><circle cx="18" cy="14" r="1.6"/></svg>
+      <span class="label">Wallet</span>
+    </a>
+    <a href="{% url 'walletapp:transactions' %}" class="dash-nav-item {% if vn == 'walletapp:transactions' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+      <span class="label">Activity</span>
+    </a>
+
+    <div class="dash-nav-group-label">Account</div>
+    <a href="{% url 'accounts:profile' %}" class="dash-nav-item {% if vn == 'accounts:profile' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.6-4 5-6 8-6s6.4 2 8 6"/></svg>
+      <span class="label">Profile</span>
+    </a>
+    <a href="{% url 'accounts:edit_profile' %}" class="dash-nav-item {% if vn == 'accounts:edit_profile' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>
+      <span class="label">Edit Profile</span>
+    </a>
+    <a href="{% url 'accounts:settings' %}" class="dash-nav-item {% if vn == 'accounts:settings' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9c.26-.6.14-1.3-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06c.52.47 1.22.59 1.82.33H9c.55-.23.94-.75 1-1.35V3a2 2 0 0 1 4 0v.09c.06.6.45 1.12 1 1.35.6.26 1.3.14 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06c-.47.52-.59 1.22-.33 1.82V9c.23.55.75.94 1.35 1H21a2 2 0 0 1 0 4h-.09c-.6.06-1.12.45-1.35 1Z"/></svg>
+      <span class="label">Settings</span>
+    </a>
+  </nav>
+
+  <div class="dash-sidebar-foot">
+    <div class="dash-nav-divider" style="margin:0 0 10px;"></div>
+    <a href="{% url 'accounts:logout' %}" class="dash-nav-item danger" style="margin-bottom:10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      <span class="label">Logout</span>
+    </a>
+    <a href="{% url 'accounts:profile' %}" class="dash-user-card">
+      <span class="avatar-lg">
+        {% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% else %}{{ user.initials }}{% endif %}
+      </span>
+      <span class="who">
+        <b>{{ user.first_name|default:user.username }}</b>
+        <span>{{ user.email }}</span>
+      </span>
+    </a>
+  </div>
+</aside>
+{% endwith %}

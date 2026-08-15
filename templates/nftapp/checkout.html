@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Checkout — {{ nft.name }} — Mintique{% endblock %}
+{% block content %}
+<div class="checkout-wrap">
+  <div class="section-head" style="margin-bottom:26px;">
+    <span class="eyebrow">✦ Checkout</span>
+    <h2>Complete your <span class="grad-text">purchase</span></h2>
+  </div>
+
+  <div class="checkout-card">
+    <div class="checkout-item-row">
+      <img src="{{ nft.image.url }}" alt="{{ nft.name }}" class="checkout-item-img">
+      <div class="checkout-item-meta">
+        <div class="muted" style="font-size:0.82rem;">{% if nft.collection %}{{ nft.collection.name }}{% else %}{{ nft.creator_name }}{% endif %}</div>
+        <div style="font-weight:700; font-size:1.05rem;">{{ nft.name }} {% if nft.is_verified %}<span class="badge badge-verified" style="position:static; display:inline-flex;">✓</span>{% endif %}</div>
+      </div>
+      <div class="checkout-item-price">
+        <div class="mono" style="font-weight:700;">{{ nft.price }} {{ currency }}</div>
+        <div class="muted" style="font-size:0.8rem;">${{ usd_estimate|floatformat:2 }}</div>
+      </div>
+    </div>
+
+    <div class="checkout-divider"></div>
+
+    <div class="checkout-total-row">
+      <span>Total</span>
+      <div style="text-align:right;">
+        <div class="mono" style="font-weight:700; font-size:1.1rem;">{{ nft.price }} {{ currency }}</div>
+        <div class="muted" style="font-size:0.8rem;">${{ usd_estimate|floatformat:2 }}</div>
+      </div>
+    </div>
+
+    <div class="checkout-divider"></div>
+
+    <div class="checkout-payment">
+      <div class="checkout-payment-label">PAYMENT</div>
+
+      <label class="checkout-payment-option {% if user.has_wallet %}selected{% endif %}">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:1.3rem;">👛</span>
+          <div>
+            <div style="font-weight:600;">Mintique Wallet</div>
+            <div class="muted" style="font-size:0.78rem;">
+              {% if user.has_wallet %}{{ wallet_balance|floatformat:4 }} {{ currency }} available{% else %}Not connected{% endif %}
+            </div>
+          </div>
+        </div>
+        <input type="radio" name="payment_method" checked>
+      </label>
+    </div>
+
+    {% if user.has_wallet and not sufficient_funds %}
+      <div class="checkout-error">
+        <span>⚠ Insufficient funds — you need {{ nft.price }} {{ currency }}.</span>
+        <a href="{% url 'walletapp:swap' %}" class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;">Get {{ currency }}</a>
+      </div>
+    {% endif %}
+
+    <form method="post" data-wallet-gate>
+      {% csrf_token %}
+      <button type="submit" class="btn btn-gradient btn-block btn-lg mt-16"
+              {% if user.has_wallet and not sufficient_funds %}disabled{% endif %}>
+        Buy Now
+      </button>
+    </form>
+    <a href="{{ nft.get_absolute_url }}" class="muted center" style="display:block; margin-top:14px; font-size:0.85rem;">← Back to item</a>
+  </div>
+</div>
+
+{% include "walletapp/_wallet_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>document.body.dataset.walletConnected = "{% if user.has_wallet %}true{% else %}false{% endif %}";</script>
+<script src="{% static 'js/wallet.js' %}"></script>
+{% endblock %}

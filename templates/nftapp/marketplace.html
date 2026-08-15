@@ -1,0 +1,80 @@
+{% extends "dash_base.html" %}
+{% block title %}Marketplace — Mintique{% endblock %}
+{% block page_eyebrow %}Marketplace{% endblock %}
+{% block page_title %}Buy NFTs{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block topbar_burger %}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">✦ Marketplace</span>
+    <h2>Discover <span class="grad-text">Digital Assets</span></h2>
+    <p>Browse verified NFTs from creators around the world.</p>
+  </div>
+
+  {% if user.is_authenticated %}
+  <div class="subnav" style="max-width:1280px; margin-left:auto; margin-right:auto;">
+    <a href="{% url 'nftapp:marketplace' %}" class="active">Marketplace</a>
+    <a href="{% url 'nftapp:collection_list' %}">Collections</a>
+    <a href="{% url 'nftapp:wishlist' %}">Wishlist</a>
+    <a href="{% url 'nftapp:favorites' %}">Favorites</a>
+    <a href="{% url 'nftapp:recently_viewed' %}">Recently Viewed</a>
+  </div>
+  {% endif %}
+
+  <form method="get" class="filter-bar">
+    <div class="field">
+      <label>Search</label>
+      {{ filter_form.q }}
+    </div>
+    <div class="field">
+      <label>Category</label>
+      {{ filter_form.category }}
+    </div>
+    <div class="field">
+      <label>Collection</label>
+      {{ filter_form.collection }}
+    </div>
+    <div class="field">
+      <label>Min Price</label>
+      {{ filter_form.price_min }}
+    </div>
+    <div class="field">
+      <label>Max Price</label>
+      {{ filter_form.price_max }}
+    </div>
+    <div class="field">
+      <label>{{ filter_form.verified_only }} Verified only</label>
+    </div>
+    <div class="field">
+      <label>Sort By</label>
+      {{ filter_form.sort }}
+    </div>
+    <button type="submit" class="btn btn-gradient">Filter</button>
+  </form>
+  {% if filter_form.non_field_errors %}
+    <p class="error center">{{ filter_form.non_field_errors.0 }}</p>
+  {% endif %}
+
+  {% if page_obj %}
+  <div class="grid-3">
+    {% for nft in page_obj %}
+      {% include "nftapp/_nft_card.html" with nft=nft show_wishlist=True wishlisted_ids=wishlisted_ids %}
+    {% endfor %}
+  </div>
+
+  <div class="pagination">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">←</a>{% endif %}
+    <span class="current">{{ page_obj.number }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">→</a>{% endif %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="ico">🔍</div>
+    <h3>No NFTs found</h3>
+    <p>Try adjusting your search or filters, or be the first to mint one in this category.</p>
+    <a href="{% url 'nftapp:mint' %}" class="btn btn-gradient">+ Mint an NFT</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

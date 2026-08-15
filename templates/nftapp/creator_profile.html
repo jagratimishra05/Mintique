@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ creator.first_name|default:creator.username }} — Mintique{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-title-row">
+    <div class="dash-welcome" style="margin-bottom:0;">
+      <div class="avatar-lg">{{ creator.initials }}</div>
+      <div>
+        <div class="creator-badge-row">
+          <h1 style="margin:0;">{{ creator.first_name|default:creator.username }}{% if creator.last_name %} {{ creator.last_name }}{% endif %}</h1>
+          {% if creator.is_verified_creator %}<span class="badge badge-verified">✓ Verified Creator</span>{% endif %}
+        </div>
+        {% if creator.bio %}<p class="muted mt-8">{{ creator.bio }}</p>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-cards mt-24" style="grid-template-columns:repeat(2,1fr);">
+    <div class="stat-card">
+      <div class="row">NFTs Minted <span>🖼</span></div>
+      <div class="value violet">{{ stats.minted }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="row">NFTs Sold <span>↗</span></div>
+      <div class="value green">{{ stats.sold }}</div>
+    </div>
+  </div>
+
+  {% if collections %}
+  <div class="section-title-row mt-40">
+    <h3>Collections</h3>
+  </div>
+  <div class="grid-3">
+    {% for c in collections %}
+    <a href="{{ c.get_absolute_url }}" class="nft-card">
+      <div class="thumb">
+        {% if c.cover_image %}<img src="{{ c.cover_image.url }}" alt="{{ c.name }}">
+        {% else %}<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:2rem;">📦</div>{% endif %}
+      </div>
+      <div class="body">
+        <div class="row"><b>{{ c.name }}</b>{% if c.is_verified %}<span class="badge badge-verified">✓</span>{% endif %}</div>
+        <span class="muted">{{ c.nft_count }} item{{ c.nft_count|pluralize }}</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="section-title-row mt-40">
+    <h3>NFTs</h3>
+  </div>
+  {% if nfts %}
+  <div class="grid-3">
+    {% for nft in nfts %}
+      {% include "nftapp/_nft_card.html" with nft=nft show_wishlist=True wishlisted_ids=wishlisted_ids %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="ico">✦</div>
+    <h3>Nothing here yet</h3>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

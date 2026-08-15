@@ -1,0 +1,145 @@
+{% extends "dash_base.html" %}
+{% load static %}
+{% block title %}Dashboard — Mintique{% endblock %}
+{% block page_eyebrow %}Overview{% endblock %}
+{% block page_title %}Welcome back, {{ user.first_name|default:user.username }}{% endblock %}
+{% block content %}
+<div class="dash-shell">
+
+  <div class="page-head">
+    <div>
+      <p>{{ user.email }} · here's how your collection is performing</p>
+    </div>
+    <div class="page-head-actions">
+      <div class="subnav-compact">
+        <a href="{% url 'nftapp:my_collection' %}">My Collection</a>
+        <a href="{% url 'nftapp:batch_mint' %}">Batch Mint</a>
+        <a href="{% url 'nftapp:create_collection' %}">New Collection</a>
+        <a href="{% url 'nftapp:wishlist' %}">Wishlist{% if wishlist_count %} ({{ wishlist_count }}){% endif %}</a>
+        <a href="{% url 'nftapp:favorites' %}">Favorites</a>
+        <a href="{% url 'nftapp:recently_viewed' %}">Recently Viewed</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-stats-row">
+    <div class="mini-stat">
+      <div class="row">Total NFTs <span>🖼</span></div>
+      <div class="value violet">{{ total_nfts }}</div>
+      <div class="sub">Across the platform</div>
+    </div>
+    <div class="mini-stat">
+      <div class="row">Owned <span>👤</span></div>
+      <div class="value blue">{{ owned_nfts }}</div>
+      <div class="sub">{{ listed_items }} listed</div>
+    </div>
+    <div class="mini-stat">
+      <div class="row">Collections <span>📦</span></div>
+      <div class="value amber">{{ collections_count }}</div>
+      <div class="sub">Created by you</div>
+    </div>
+    <div class="mini-stat">
+      <div class="row">Earnings <span>↗</span></div>
+      <div class="value green">{{ total_earnings }} ETH</div>
+      <div class="sub">{% if total_royalties %}+{{ total_royalties }} royalties{% else %}Lifetime{% endif %}</div>
+    </div>
+    <div class="mini-stat">
+      <div class="row">Wallet <span>💰</span></div>
+      <div class="value violet">{{ wallet_eth|floatformat:3 }} ETH</div>
+      <div class="sub">{{ wallet_mnq|floatformat:2 }} MNQ</div>
+    </div>
+    <div class="mini-stat">
+      <div class="row">Activity <span>⚡</span></div>
+      <div class="value blue">{{ recent_activity_count }}</div>
+      <div class="sub">Transactions logged</div>
+    </div>
+  </div>
+
+  <div class="dash-main-grid">
+    <div class="dash-charts-panel">
+      <div class="mini-chart-card">
+        <h4>NFT Sales</h4>
+        <div class="chart-sub">Last 6 months</div>
+        <div class="chart-wrap"><canvas id="salesChart"></canvas></div>
+      </div>
+      <div class="mini-chart-card">
+        <h4>Revenue</h4>
+        <div class="chart-sub">ETH, last 6 months</div>
+        <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+      </div>
+      <div class="mini-chart-card">
+        <h4>Views</h4>
+        <div class="chart-sub">Most recent 5 NFTs</div>
+        <div class="chart-wrap"><canvas id="viewsChart"></canvas></div>
+      </div>
+      <div class="mini-chart-card">
+        <h4>Likes</h4>
+        <div class="chart-sub">Most recent 5 NFTs</div>
+        <div class="chart-wrap"><canvas id="likesChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="dash-side-panel">
+      <div class="dash-panel-box">
+        <div class="dash-panel-head">
+          <h3>Your Recent NFTs</h3>
+          <a href="{% url 'nftapp:my_collection' %}" class="muted">View all →</a>
+        </div>
+        <div class="dash-panel-scroll">
+          {% if recent_nfts %}
+            {% for nft in recent_nfts %}
+            <a href="{{ nft.get_absolute_url }}" class="mini-nft-row">
+              <img src="{{ nft.image.url }}" alt="{{ nft.name }}">
+              <div class="info">
+                <b>{{ nft.name }}</b>
+                <span>{{ nft.price }} {{ nft.currency }}</span>
+              </div>
+              <span class="badge {% if nft.is_listed %}badge-verified{% else %}badge-token{% endif %}">
+                {% if nft.is_listed %}Listed{% else %}Sold{% endif %}
+              </span>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="dash-empty-mini">
+              No NFTs yet — <a href="{% url 'nftapp:mint' %}">mint your first one</a>.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="dash-panel-box">
+        <div class="dash-panel-head">
+          <h3>Recent Activity</h3>
+          <a href="{% url 'walletapp:transactions' %}" class="muted">View all →</a>
+        </div>
+        <div class="dash-panel-scroll">
+          {% if recent_transactions %}
+            {% for tx in recent_transactions %}
+            <div class="mini-tx-row">
+              <span class="tx-type {{ tx.tx_type }}">{{ tx.get_tx_type_display }}</span>
+              <span class="muted">{{ tx.note }}</span>
+              <span class="mono">{{ tx.amount }} {{ tx.token }}</span>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="dash-empty-mini">No activity logged yet.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{{ sales_labels|json_script:"salesLabels" }}
+{{ sales_data|json_script:"salesData" }}
+{{ revenue_data|json_script:"revenueData" }}
+{{ nft_labels|json_script:"nftLabels" }}
+{{ views_data|json_script:"viewsData" }}
+{{ likes_data|json_script:"likesData" }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/dashboard_charts.js' %}"></script>
+{% endblock %}

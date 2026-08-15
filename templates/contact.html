@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Contact — Mintique{% endblock %}
+{% block content %}
+
+<section class="section" style="padding-top:96px;">
+  <div class="section-head">
+    <span class="eyebrow">✦ Get in Touch</span>
+    <h2>Let's talk <span class="grad-text">Mintique</span></h2>
+    <p>Questions about minting, verification, or your wallet? Our team replies within 24 hours.</p>
+  </div>
+
+  <div class="contact-grid">
+    <div>
+      <div class="contact-info-card">
+        <div class="contact-method">
+          <div class="icon">✉</div>
+          <div>
+            <h4>Email</h4>
+            <a href="mailto:support@mintique.io">support@mintique.io</a>
+          </div>
+        </div>
+        <div class="contact-method">
+          <div class="icon">☎</div>
+          <div>
+            <h4>Phone</h4>
+            <a href="tel:+15551234567">+1 (555) 123-4567</a>
+          </div>
+        </div>
+        <div class="contact-method">
+          <div class="icon">⌖</div>
+          <div>
+            <h4>Address</h4>
+            <p>500 Market Street, Suite 200<br>San Francisco, CA 94105</p>
+          </div>
+        </div>
+        <div class="contact-method">
+          <div class="icon">◷</div>
+          <div>
+            <h4>Support Hours</h4>
+            <p>Mon–Fri, 9am–6pm PT</p>
+          </div>
+        </div>
+        <div class="social-row" style="margin-top:8px;">
+          <a href="#" aria-label="Twitter">𝕏</a>
+          <a href="#" aria-label="Discord">◎</a>
+          <a href="#" aria-label="Instagram">◈</a>
+          <a href="#" aria-label="LinkedIn">in</a>
+        </div>
+        <div class="map-embed">
+          <iframe title="Mintique HQ location" loading="lazy"
+            src="https://maps.google.com/maps?q=500%20Market%20Street%20San%20Francisco&t=&z=13&ie=UTF8&iwloc=&output=embed">
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      {% if sent %}
+        <div class="form-success">
+          <span style="font-size:1.4rem;">✓</span>
+          <div>
+            <b>Message sent!</b>
+            <p class="muted" style="margin-top:2px;">Thanks for reaching out — we'll get back to you within 24 hours.</p>
+          </div>
+        </div>
+      {% endif %}
+
+      <form method="post" data-validate novalidate>
+        {% csrf_token %}
+        <div class="field-row">
+          <div class="field {% if form.name.errors %}field-invalid{% endif %}">
+            <label for="{{ form.name.id_for_label }}">Full Name</label>
+            {{ form.name }}
+            {% for error in form.name.errors %}<div class="error">⚠ {{ error }}</div>{% endfor %}
+          </div>
+          <div class="field {% if form.email.errors %}field-invalid{% endif %}">
+            <label for="{{ form.email.id_for_label }}">Email Address</label>
+            {{ form.email }}
+            {% for error in form.email.errors %}<div class="error">⚠ {{ error }}</div>{% endfor %}
+          </div>
+        </div>
+        <div class="field {% if form.subject.errors %}field-invalid{% endif %}">
+          <label for="{{ form.subject.id_for_label }}">Subject</label>
+          {{ form.subject }}
+          {% for error in form.subject.errors %}<div class="error">⚠ {{ error }}</div>{% endfor %}
+        </div>
+        <div class="field {% if form.message.errors %}field-invalid{% endif %}">
+          <label for="{{ form.message.id_for_label }}">Message</label>
+          {{ form.message }}
+          <div class="hint">Minimum 10 characters. Tell us what's going on and we'll route it to the right person.</div>
+          {% for error in form.message.errors %}<div class="error">⚠ {{ error }}</div>{% endfor %}
+        </div>
+        <button type="submit" class="btn btn-gradient btn-lg btn-block">Send Message →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

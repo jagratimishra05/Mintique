@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}About — Mintique{% endblock %}
+{% block content %}
+
+<section class="about-hero">
+  <span class="eyebrow">✦ About Mintique</span>
+  <h1 class="mt-16">Ownership you can <span class="grad-text">verify</span>, not just claim.</h1>
+  <p class="lead">Mintique was built on a simple frustration: digital art was easy to copy and hard to prove. So we built a minting and authentication platform where every asset gets a permanent, cryptographically unique Token ID — a certificate of ownership no one can fake.</p>
+  <div class="stat-row" style="justify-content:center; margin-top:48px;">
+    <div class="stat"><b>{{ stats.minted|default:"25K+" }}</b><span>NFTs Minted</span></div>
+    <div class="stat"><b>{{ stats.creators|default:"500+" }}</b><span>Creators Onboard</span></div>
+    <div class="stat"><b>100%</b><span>On-chain Verified</span></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="value-grid">
+    <div class="value-card">
+      <div class="icon">◎</div>
+      <h3>Our Mission</h3>
+      <p>Give every creator a fast, low-friction way to mint work that's provably theirs — and give every collector confidence that what they're buying is the real thing.</p>
+    </div>
+    <div class="value-card">
+      <div class="icon">◈</div>
+      <h3>Our Vision</h3>
+      <p>A future where digital ownership is as trustworthy as a paper deed — instantly verifiable, globally recognized, and impossible to counterfeit.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">✦ Why Mintique</span>
+    <h2>What makes us <span class="grad-text">different</span></h2>
+    <p>We're not another marketplace bolted onto someone else's chain logic — authentication is the core product.</p>
+  </div>
+  <div class="grid-4">
+    <div class="feature-card c1">
+      <div class="icon">🛡</div>
+      <h3>Verified by Design</h3>
+      <p>Every mint is checked and signed before it ever reaches the marketplace — authenticity isn't an afterthought.</p>
+    </div>
+    <div class="feature-card c2">
+      <div class="icon">#</div>
+      <h3>Unique Token IDs</h3>
+      <p>No two assets share an identifier. Your Token ID is your asset's fingerprint, forever.</p>
+    </div>
+    <div class="feature-card c3">
+      <div class="icon">⚡</div>
+      <h3>Built for Speed</h3>
+      <p>Mint in seconds with an optimized pipeline — connect your wallet only when it's actually needed.</p>
+    </div>
+    <div class="feature-card c4">
+      <div class="icon">⇄</div>
+      <h3>Fair, Transparent Fees</h3>
+      <p>Swap and trade with clear pricing at every step. No hidden spreads, no surprise gas traps.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">✦ Our Story</span>
+    <h2>How we got <span class="grad-text">here</span></h2>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <span class="tl-tag">Founded</span>
+      <h4>An idea born from a copied portfolio</h4>
+      <p>Mintique started after our founding team watched a friend's digital art get resold under someone else's name — with no way to prove otherwise.</p>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-tag">Building</span>
+      <h4>The authentication engine</h4>
+      <p>We spent the first year on one problem: making every minted asset provably unique, before adding a single marketplace feature.</p>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-tag">Launch</span>
+      <h4>Opening the marketplace</h4>
+      <p>With authentication solid, we opened Mintique to creators and collectors — pairing verified minting with instant token swaps.</p>
+    </div>
+    <div class="timeline-item">
+      <span class="tl-tag">Today</span>
+      <h4>Thousands of verified assets</h4>
+      <p>Mintique now supports a growing community of creators and collectors trading with confidence, backed by a Token ID for every piece.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="newsletter">
+    <div class="mail-ico">✦</div>
+    <span class="eyebrow">✦ Join the Platform</span>
+    <h2>Ready to mint your <span class="grad-text">first asset?</span></h2>
+    <p>Create an account, connect a wallet, and mint your first verified NFT in minutes.</p>
+    <div class="hero-cta" style="justify-content:center;">
+      <a href="{% url 'nftapp:mint' %}" class="btn btn-gradient btn-lg">✦ Mint NFT</a>
+      <a href="{% url 'contact' %}" class="btn btn-outline btn-lg">Talk to Us →</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

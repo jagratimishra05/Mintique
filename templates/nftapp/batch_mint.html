@@ -1,0 +1,73 @@
+{% extends "dash_base.html" %}
+{% load static %}
+{% block title %}Batch Mint — Mintique{% endblock %}
+{% block page_eyebrow %}NFTs{% endblock %}
+{% block page_title %}Batch Mint{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head">
+    <span class="eyebrow">✦ Batch Mint</span>
+    <h2>Mint <span class="grad-text">Multiple NFTs</span> at Once</h2>
+    <p>Upload several images with shared metadata — each becomes its own NFT with a unique token ID.</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="card" style="max-width:640px; margin:0 auto;" data-wallet-gate novalidate>
+    {% csrf_token %}
+    <div class="field">
+      <label>Artwork Files *</label>
+      {{ form.images }}
+      <p class="hint">{{ form.images.help_text }}</p>
+      {% if form.images.errors %}<div class="error">{{ form.images.errors.0 }}</div>{% endif %}
+    </div>
+    <div class="field">
+      <label>Name Prefix *</label>
+      {{ form.name_prefix }}
+      <p class="hint">{{ form.name_prefix.help_text }}</p>
+    </div>
+    <div class="field">
+      <label>Creator Name *</label>
+      {{ form.creator_name }}
+    </div>
+    <div class="field">
+      <label>Shared Description</label>
+      {{ form.description }}
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Category</label>
+        {{ form.category }}
+      </div>
+      <div class="field">
+        <label>Price per NFT</label>
+        <div style="display:flex; gap:8px;">
+          {{ form.price }}
+          <div style="flex:0 0 130px;">{{ form.currency }}</div>
+        </div>
+        {% if form.price.errors %}<div class="error">{{ form.price.errors.0 }}</div>{% endif %}
+        {% if form.currency.errors %}<div class="error">{{ form.currency.errors.0 }}</div>{% endif %}
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Collection (optional)</label>
+        {{ form.collection }}
+      </div>
+      <div class="field">
+        <label>{{ form.royalty_percentage.label }}</label>
+        {{ form.royalty_percentage }}
+      </div>
+    </div>
+    <div class="field">
+      <label>{{ form.is_lazy_minted }} {{ form.is_lazy_minted.label }}</label>
+    </div>
+    <button type="submit" class="btn btn-gradient btn-block btn-lg">✦ Mint Batch</button>
+  </form>
+</section>
+
+{% include "walletapp/_wallet_modal.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>document.body.dataset.walletConnected = "{% if user.has_wallet %}true{% else %}false{% endif %}";</script>
+<script src="{% static 'js/wallet.js' %}"></script>
+{% endblock %}

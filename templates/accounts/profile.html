@@ -1,0 +1,67 @@
+{% extends "dash_base.html" %}
+{% block title %}Profile — Mintique{% endblock %}
+{% block page_eyebrow %}Account{% endblock %}
+{% block page_title %}Profile{% endblock %}
+{% block content %}
+
+<div class="profile-hero">
+  <div class="avatar-xl">
+    {% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% else %}{{ user.initials }}{% endif %}
+  </div>
+  <div class="info">
+    <h2>
+      {{ user.first_name|default:user.username }}{% if user.last_name %} {{ user.last_name }}{% endif %}
+      {% if user.is_verified_creator %}<span class="badge badge-verified">✓ Verified Creator</span>{% endif %}
+    </h2>
+    <p class="muted">{{ user.email }} · Member since {{ user.created_at|date:"M Y" }}</p>
+    {% if user.bio %}<p class="bio">{{ user.bio }}</p>{% endif %}
+  </div>
+  <div class="profile-hero-actions">
+    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-gradient btn-sm">Edit Profile</a>
+    <a href="{% url 'accounts:settings' %}" class="btn btn-outline btn-sm">Settings</a>
+  </div>
+</div>
+
+<div class="profile-stats-row">
+  <div class="mini-stat">
+    <div class="row">Owned <span>🖼</span></div>
+    <div class="value violet">{{ stats.owned }}</div>
+    <div class="sub">NFTs in your wallet</div>
+  </div>
+  <div class="mini-stat">
+    <div class="row">Minted <span>✦</span></div>
+    <div class="value blue">{{ stats.minted }}</div>
+    <div class="sub">Created by you</div>
+  </div>
+  <div class="mini-stat">
+    <div class="row">Collections <span>📦</span></div>
+    <div class="value amber">{{ stats.collections }}</div>
+    <div class="sub">You've organized</div>
+  </div>
+  <div class="mini-stat">
+    <div class="row">Sold <span>↗</span></div>
+    <div class="value green">{{ stats.sold }}</div>
+    <div class="sub">Completed sales</div>
+  </div>
+</div>
+
+<div class="card" style="max-width:640px;">
+  <div class="dash-panel-head" style="margin-bottom:14px;"><h3>Account details</h3></div>
+  <div class="settings-row" style="border-top:none; padding-top:0;">
+    <div class="label"><b>Username</b><span>{{ user.username }}</span></div>
+  </div>
+  <div class="settings-row">
+    <div class="label"><b>Email</b><span>{{ user.email }}</span></div>
+    {% if user.is_email_verified %}<span class="badge badge-verified">Verified</span>{% else %}<span class="badge badge-token">Unverified</span>{% endif %}
+  </div>
+  <div class="settings-row">
+    <div class="label"><b>Wallet address</b><span>{{ user.wallet_address|default:"Not connected" }}</span></div>
+    <a href="{% url 'walletapp:swap' %}" class="btn btn-ghost btn-sm">Manage</a>
+  </div>
+  <div class="settings-row">
+    <div class="label"><b>Public creator page</b><span>See how collectors view your profile</span></div>
+    <a href="{% url 'nftapp:creator_profile' user.username %}" class="btn btn-ghost btn-sm">View →</a>
+  </div>
+</div>
+
+{% endblock %}

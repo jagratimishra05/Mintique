@@ -1,0 +1,99 @@
+{% extends "dash_base.html" %}
+{% load static %}
+{% block title %}Swap Tokens — Mintique{% endblock %}
+{% block page_eyebrow %}Wallet{% endblock %}
+{% block page_title %}Wallet{% endblock %}
+{% block content %}
+<div class="swap-wrap">
+  <div class="section-head" style="margin-bottom:30px;">
+    <span class="eyebrow">✦ Token Swap</span>
+    <h2>Swap <span class="grad-text">Any Crypto</span></h2>
+    <p>Trade between every currency your Mintique wallet holds — ETH, MNQ and more.</p>
+  </div>
+
+  <div class="balance-row" style="flex-wrap:wrap;">
+    {% for row in token_rows %}
+    <div class="balance-chip">
+      <div class="lbl">{{ row.icon }} {{ row.symbol }} Balance</div>
+      <div class="val">{{ row.balance }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="swap-card">
+    <form method="post" id="swapForm">
+      {% csrf_token %}
+      <input type="hidden" name="from_token" id="swapFromToken" value="{{ form.from_token.value|default:'ETH' }}">
+      <input type="hidden" name="to_token" id="swapToToken" value="{{ form.to_token.value|default:'MNQ' }}">
+
+      <div class="swap-box">
+        <div class="top-row"><span>From</span><span>Balance: <span id="swapFromBalance">0</span></span></div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <input type="number" name="amount" id="swapAmount" step="any" placeholder="0.0" required
+                 value="{{ form.amount.value|default:'' }}">
+          <select id="swapFromSelect" class="token-select">
+            {% for row in token_rows %}
+              <option value="{{ row.symbol }}" {% if row.symbol == "ETH" %}selected{% endif %}>{{ row.icon }} {{ row.symbol }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="swap-arrow" id="swapArrowBtn">⇅</div>
+
+      <div class="swap-box">
+        <div class="top-row"><span>To (estimated)</span><span>Balance: <span id="swapToBalance">0</span></span></div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div id="swapEstimate" style="font-size:1.8rem; font-family:var(--font-display); flex:1;">0</div>
+          <select id="swapToSelect" class="token-select">
+            {% for row in token_rows %}
+              <option value="{{ row.symbol }}" {% if row.symbol == "MNQ" %}selected{% endif %}>{{ row.icon }} {{ row.symbol }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="swap-meta">
+        <span>Rate</span><span id="swapRateLabel">—</span>
+      </div>
+      <div class="swap-meta">
+        <span>Platform Fee</span><span>{{ fee_percent }}%</span>
+      </div>
+
+      {% if form.amount.errors %}<div class="error mt-8">{{ form.amount.errors.0 }}</div>{% endif %}
+      {% if form.non_field_errors %}<div class="error mt-8">{{ form.non_field_errors.0 }}</div>{% endif %}
+
+      <button type="submit" class="btn btn-gradient btn-block btn-lg mt-16">Swap Tokens</button>
+    </form>
+  </div>
+
+  {% if recent_txs %}
+  <div class="section-title-row mt-40">
+    <h3>Recent Swaps</h3>
+  </div>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table class="tx-table">
+      <thead><tr><th>Details</th><th>Amount</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for tx in recent_txs %}
+        <tr>
+          <td class="muted">{{ tx.note }}</td>
+          <td class="mono">{{ tx.amount }} {{ tx.token }}</td>
+          <td class="muted">{{ tx.created_at|date:"M d, H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.body.dataset.cryptoRates = '{{ rates_json|escapejs }}';
+  document.body.dataset.cryptoBalances = '{{ balances_json|escapejs }}';
+  document.body.dataset.feePct = "{{ fee_percent }}";
+</script>
+<script src="{% static 'js/swap.js' %}"></script>
+{% endblock %}

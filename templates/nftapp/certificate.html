@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Certificate of Authenticity — {{ nft.name }} — Mintique{% endblock %}
+{% block content %}
+<div class="cert-page-wrap">
+  <div class="cert-page-actions">
+    <a href="{{ nft.get_absolute_url }}" class="muted" style="font-size:0.85rem;">← Back to item</a>
+    <div style="display:flex; gap:10px;">
+      <button type="button" class="btn btn-outline" onclick="window.print()">🖨 Print Certificate</button>
+      <a href="{% url 'nftapp:certificate_download' nft.pk %}" class="btn btn-gradient">⬇ Download Certificate (PDF)</a>
+    </div>
+  </div>
+
+  <div class="certificate">
+    <div class="certificate-inner">
+      <div class="cert-eyebrow">✦ MINTIQUE ✦</div>
+      <h1 class="cert-title">Certificate of Authenticity</h1>
+      <p class="cert-sub">This certifies that the digital asset described below is recorded and verifiably owned on the Mintique platform.</p>
+
+      <div class="cert-body">
+        <div class="cert-thumb-frame">
+          <img src="{{ nft.image.url }}" alt="{{ asset_name }}" class="cert-thumb">
+        </div>
+
+        <div class="cert-fields">
+          <div class="cert-field">
+            <div class="cert-label">Asset Name</div>
+            <div class="cert-value">{{ asset_name }}</div>
+          </div>
+          <div class="cert-field">
+            <div class="cert-label">Certificate ID</div>
+            <div class="cert-value">{{ certificate_id }}</div>
+          </div>
+          <div class="cert-field">
+            <div class="cert-label">Token ID</div>
+            <div class="cert-value mono">{% if token_id %}#{{ token_id }}{% else %}Pending on-chain mint{% endif %}</div>
+          </div>
+          <div class="cert-field">
+            <div class="cert-label">Certified Owner</div>
+            <div class="cert-value">{{ certified_owner }}</div>
+          </div>
+          <div class="cert-field">
+            <div class="cert-label">Creator</div>
+            <div class="cert-value">{{ creator_name }}</div>
+          </div>
+          <div class="cert-field">
+            <div class="cert-label">Date Minted</div>
+            <div class="cert-value">{{ date_minted|date:"F d, Y" }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-divider"></div>
+
+      <div class="cert-footer">
+        <div class="cert-hash">
+          <div class="cert-label">Content hash</div>
+          <div class="mono" style="font-size:0.72rem; word-break:break-all;">{{ content_hash }}</div>
+        </div>
+        {% if qr_data_uri %}
+          <div class="cert-qr">
+            <img src="{{ qr_data_uri }}" alt="Scan to verify">
+            <div class="cert-label" style="text-align:center; margin-top:6px;">Scan to verify</div>
+          </div>
+        {% endif %}
+        <div class="cert-wordmark">
+          <div class="cert-wordmark-brand">Mintique</div>
+          <div class="cert-label">Platform of record</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="muted center mt-16" style="font-size:0.82rem;">Only the current owner or original creator can view or download this certificate.</p>
+</div>
+{% endblock %}

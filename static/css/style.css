@@ -262,7 +262,7 @@ button {
   align-items: center;
 }
 
-.nav-links a {
+.nav-links>a {
   position: relative;
   color: var(--text-dim);
   font-weight: 500;
@@ -272,7 +272,7 @@ button {
   transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
 }
 
-.nav-links a::after {
+.nav-links>a::after {
   content: '';
   position: absolute;
   left: 14px;
@@ -286,21 +286,21 @@ button {
   transition: transform var(--dur) var(--ease);
 }
 
-.nav-links a:hover {
+.nav-links>a:hover {
   color: var(--text);
   background: rgba(168, 85, 247, 0.08);
 }
 
-.nav-links a:hover::after {
+.nav-links>a:hover::after {
   transform: scaleX(1);
 }
 
-.nav-links a.active {
+.nav-links>a.active {
   color: var(--text);
   font-weight: 600;
 }
 
-.nav-links a.active::after {
+.nav-links>a.active::after {
   transform: scaleX(1);
 }
 
@@ -308,6 +308,7 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: 16px;
 }
 
 .theme-toggle {
@@ -3606,27 +3607,28 @@ select:hover {
     transform: translateX(100%);
     transition: transform var(--dur-slow) var(--ease);
     z-index: 200;
+    overflow-y: auto;
   }
 
   .nav-links.open-mobile {
     transform: translateX(0);
   }
 
-  .nav-links a {
+  .nav-links>a {
     padding: 14px 16px;
     font-size: 1.05rem;
     opacity: 0;
     transform: translateX(16px);
   }
 
-  .nav-links.open-mobile a {
+  .nav-links.open-mobile>a {
     opacity: 1;
     transform: translateX(0);
     transition: opacity .35s var(--ease), transform .35s var(--ease);
     transition-delay: calc(var(--i, 0) * 60ms);
   }
 
-  .nav-links a::after {
+  .nav-links>a::after {
     display: none;
   }
 
@@ -3647,6 +3649,30 @@ select:hover {
 
   .nav-burger {
     display: flex;
+  }
+
+  .nav-actions {
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 0;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    gap: 10px;
+  }
+
+  .nav-actions .theme-toggle {
+    align-self: flex-start;
+  }
+
+  .nav-actions .btn,
+  .nav-actions .wallet-pill {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-actions .avatar-chip {
+    align-self: center;
   }
 
   .hero-grid {

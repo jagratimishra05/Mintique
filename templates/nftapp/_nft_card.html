@@ -8,10 +8,8 @@ wishlisted_ids - optional set of NFT pks the current user has wishlisted
   <a href="{{ nft.get_absolute_url }}" class="nft-card">
     <div class="thumb">
       <span class="badge badge-token token-tag">{{ nft.token_id_display|default:"Not yet minted" }}</span>
-      {% if nft.is_burned %}<span class="badge burned-badge">🔥 Burned</span>
-      {% elif nft.is_lazy_minted and not nft.lazy_minted_at %}<span class="badge lazy-badge">⏳ Lazy Mint</span>{% endif
-      %}
-      <img src="{{ nft.image.url }}" alt="{{ nft.name }}">
+      {% if nft.is_burned %}<span class="badge burned-badge">🔥 Burned</span>{% elif nft.is_lazy_minted and not nft.lazy_minted_at %}<span class="badge lazy-badge">⏳ Lazy Mint</span>{% endif %}
+      <img src="{% if nft.ipfs_image_url %}{{ nft.ipfs_image_url }}{% elif nft.image %}{{ nft.image.url }}{% endif %}" alt="{{ nft.name }}">
     </div>
     <div class="body">
       <div class="row">

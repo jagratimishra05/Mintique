@@ -4,7 +4,7 @@
 {% block content %}
 <div class="detail-grid">
   <div class="detail-img" id="detailImgFrame">
-    <img src="{{ nft.image.url }}" alt="{{ nft.name }}" id="detailImg">
+    <img src="{% if nft.ipfs_image_url %}{{ nft.ipfs_image_url }}{% elif nft.image %}{{ nft.image.url }}{% endif %}" alt="{{ nft.name }}" id="detailImg">
   </div>
   <div class="detail-info">
     <div class="creator-badge-row">
@@ -179,8 +179,7 @@
         </div>
       </div>
       {% if offer_form.errors %}
-      {% for field in offer_form %}{% for err in field.errors %}<div class="error">{{ err }}</div>{% endfor %}{% endfor
-      %}
+      {% for field in offer_form %}{% for err in field.errors %}<div class="error">{{ err }}</div>{% endfor %}{% endfor %}
       {% endif %}
       <button type="submit" class="btn btn-gradient mt-8">Submit Offer</button>
     </form>

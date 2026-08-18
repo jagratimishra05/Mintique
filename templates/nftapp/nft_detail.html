@@ -4,24 +4,27 @@
 {% block content %}
 <div class="detail-grid">
   <div class="detail-img" id="detailImgFrame">
-    <img src="{{ nft.image.url }}" alt="{{ nft.name }}" id="detailImg">
+    <img src="{% if nft.ipfs_image_url %}{{ nft.ipfs_image_url }}{% elif nft.image %}{{ nft.image.url }}{% endif %}"
+      alt="{{ nft.name }}" id="detailImg">
   </div>
   <div class="detail-info">
     <div class="creator-badge-row">
       {% if nft.is_verified %}<span class="badge badge-verified">✓ Verified</span>{% endif %}
       {% if nft.is_burned %}<span class="badge burned-badge" style="position:static;">🔥 Burned</span>{% endif %}
       {% if nft.is_lazy_minted %}
-        <span class="badge {% if nft.lazy_minted_at %}badge-verified{% else %}lazy-badge{% endif %}" style="position:static;">
-          {% if nft.lazy_minted_at %}⏳ Lazy-minted (finalized){% else %}⏳ Lazy Mint (pending first sale){% endif %}
-        </span>
+      <span class="badge {% if nft.lazy_minted_at %}badge-verified{% else %}lazy-badge{% endif %}"
+        style="position:static;">
+        {% if nft.lazy_minted_at %}⏳ Lazy-minted (finalized){% else %}⏳ Lazy Mint (pending first sale){% endif %}
+      </span>
       {% endif %}
     </div>
     <h1 class="mt-16">{{ nft.name }}</h1>
     <div class="creator-row">
       by <a href="{% url 'nftapp:creator_profile' nft.owner.username %}"><b>{{ nft.creator_name }}</b></a>
-      · owned by <a href="{% url 'nftapp:creator_profile' nft.owner.username %}">{{ nft.owner.first_name|default:nft.owner.username }}</a>
+      · owned by <a href="{% url 'nftapp:creator_profile' nft.owner.username %}">{{
+        nft.owner.first_name|default:nft.owner.username }}</a>
       {% if nft.collection %}
-        · in <a href="{{ nft.collection.get_absolute_url }}">{{ nft.collection.name }}</a>
+      · in <a href="{{ nft.collection.get_absolute_url }}">{{ nft.collection.name }}</a>
       {% endif %}
     </div>
     <p class="muted">{{ nft.description|default:"No description provided." }}</p>
@@ -45,40 +48,49 @@
       <div class="token-id-row">
         <div>
           <div class="token-id-label">Certified Token ID</div>
-          <div class="token-id-value">{% if nft.token_id_display %}#{{ nft.token_id_display }}{% else %}Pending on-chain mint{% endif %}</div>
+          <div class="token-id-value">{% if nft.token_id_display %}#{{ nft.token_id_display }}{% else %}Pending on-chain
+            mint{% endif %}</div>
         </div>
         {% if qr_data_uri %}
-          <img class="token-qr" src="{{ qr_data_uri }}" alt="QR code linking to this NFT's verification page" title="Scan to verify this token">
+        <img class="token-qr" src="{{ qr_data_uri }}" alt="QR code linking to this NFT's verification page"
+          title="Scan to verify this token">
         {% endif %}
       </div>
       {% if user.is_authenticated and user.id == nft.owner_id or user.id == nft.creator_id %}
-        <a href="{% url 'nftapp:certificate' nft.pk %}" class="muted" style="display:inline-block; margin-top:12px; font-size:0.85rem; text-decoration:underline;">🎓 View Certificate of Authenticity</a>
+      <a href="{% url 'nftapp:certificate' nft.pk %}" class="muted"
+        style="display:inline-block; margin-top:12px; font-size:0.85rem; text-decoration:underline;">🎓 View Certificate
+        of Authenticity</a>
       {% endif %}
     </div>
 
     {% if nft.ipfs_metadata_cid or nft.mint_status != "offchain" %}
-      <div class="token-id-box mt-16">
-        <div class="token-id-label">Blockchain (Polygon)</div>
-        {% if nft.mint_status == "confirmed" %}
-          <p class="muted" style="font-size:0.85rem; margin-top:6px;">
-            ✅ Confirmed on-chain
-            {% if nft.polygon_explorer_url %}— <a href="{{ nft.polygon_explorer_url }}" target="_blank" rel="noopener">view transaction ↗</a>{% endif %}
-          </p>
-        {% elif can_mint_onchain %}
-          <p class="muted" style="font-size:0.85rem; margin-top:6px;">Artwork + metadata are pinned to IPFS. Sign the mint transaction with MetaMask to finish minting this NFT on Polygon.</p>
-          <button type="button" id="mintOnChainBtn" class="btn btn-gradient mt-8">🦊 Mint on Polygon</button>
-          <p class="muted mt-8" id="mintOnChainStatus" style="font-size:0.8rem;"></p>
-        {% elif nft.mint_status == "pending" %}
-          <p class="muted" style="font-size:0.85rem; margin-top:6px;">⏳ Pending on-chain confirmation from the owner's wallet.</p>
-        {% endif %}
-        {% if nft.ipfs_metadata_url %}
-          <p class="muted mt-8" style="font-size:0.8rem;"><a href="{{ nft.ipfs_metadata_url }}" target="_blank" rel="noopener">View metadata on IPFS ↗</a></p>
-        {% endif %}
-      </div>
+    <div class="token-id-box mt-16">
+      <div class="token-id-label">Blockchain (Polygon)</div>
+      {% if nft.mint_status == "confirmed" %}
+      <p class="muted" style="font-size:0.85rem; margin-top:6px;">
+        ✅ Confirmed on-chain
+        {% if nft.polygon_explorer_url %}— <a href="{{ nft.polygon_explorer_url }}" target="_blank" rel="noopener">view
+          transaction ↗</a>{% endif %}
+      </p>
+      {% elif can_mint_onchain %}
+      <p class="muted" style="font-size:0.85rem; margin-top:6px;">Artwork + metadata are pinned to IPFS. Sign the mint
+        transaction with MetaMask to finish minting this NFT on Polygon.</p>
+      <button type="button" id="mintOnChainBtn" class="btn btn-gradient mt-8">🦊 Mint on Polygon</button>
+      <p class="muted mt-8" id="mintOnChainStatus" style="font-size:0.8rem;"></p>
+      {% elif nft.mint_status == "pending" %}
+      <p class="muted" style="font-size:0.85rem; margin-top:6px;">⏳ Pending on-chain confirmation from the owner's
+        wallet.</p>
+      {% endif %}
+      {% if nft.ipfs_metadata_url %}
+      <p class="muted mt-8" style="font-size:0.8rem;"><a href="{{ nft.ipfs_metadata_url }}" target="_blank"
+          rel="noopener">View metadata on IPFS ↗</a></p>
+      {% endif %}
+    </div>
     {% endif %}
 
     {% if nft.royalty_percentage > 0 %}
-      <p class="muted" style="font-size:0.85rem;">Creator royalty: <b>{{ nft.royalty_percentage }}%</b> on every resale.</p>
+    <p class="muted" style="font-size:0.85rem;">Creator royalty: <b>{{ nft.royalty_percentage }}%</b> on every resale.
+    </p>
     {% endif %}
 
     <div class="price-box">
@@ -86,13 +98,15 @@
         <div class="muted" style="font-size:0.85rem;">Current Price</div>
         <div class="amount">{{ nft.price }} {{ nft.currency }}</div>
         {% if best_offer %}
-          <div class="muted mt-8" style="font-size:0.82rem;">Best offer: <b>{{ best_offer.amount }} {{ best_offer.currency }}</b> by {{ best_offer.bidder.first_name|default:best_offer.bidder.username }}</div>
+        <div class="muted mt-8" style="font-size:0.82rem;">Best offer: <b>{{ best_offer.amount }} {{ best_offer.currency
+            }}</b> by {{ best_offer.bidder.first_name|default:best_offer.bidder.username }}</div>
         {% endif %}
       </div>
       <div style="display:flex; gap:10px;">
         <form method="post" action="{% url 'nftapp:toggle_like' nft.pk %}">
           {% csrf_token %}
-          <button type="submit" class="btn btn-outline">{% if already_liked %}♥{% else %}♡{% endif %} {{ nft.likes }}</button>
+          <button type="submit" class="btn btn-outline">{% if already_liked %}♥{% else %}♡{% endif %} {{ nft.likes
+            }}</button>
         </form>
         {% if user.is_authenticated %}
         <form method="post" action="{% url 'nftapp:toggle_wishlist' nft.pk %}">
@@ -107,107 +121,113 @@
 
     <div class="detail-actions">
       {% if user.is_authenticated %}
-        {% if nft.is_burned %}
-          <button class="btn btn-ghost btn-block btn-lg" disabled>This NFT has been burned</button>
-        {% elif nft.is_listed and nft.owner_id != user.id %}
-          <a href="{% url 'nftapp:buy_nft' nft.pk %}" class="btn btn-gradient btn-block btn-lg" style="flex:1; text-align:center;">Buy Now</a>
-          {% if offer_form and not my_offer %}
-            <button type="button" class="btn btn-outline btn-lg" id="toggleOfferFormBtn" style="flex:1;">Make Offer</button>
-          {% endif %}
-        {% elif not nft.is_listed and nft.owner_id != user.id %}
-          <button class="btn btn-ghost btn-block btn-lg" disabled>Not for sale</button>
-          {% if offer_form and not my_offer %}
-            <button type="button" class="btn btn-outline btn-lg" id="toggleOfferFormBtn" style="flex:1;">Make Offer</button>
-          {% endif %}
-        {% elif nft.owner_id == user.id %}
-          <a href="{% url 'nftapp:gift_nft' nft.pk %}" class="btn btn-outline">🎁 Gift</a>
-          <form method="post" action="{% url 'nftapp:burn_nft' nft.pk %}"
-                onsubmit="return confirm('Burn {{ nft.name }} permanently? This cannot be undone.');" style="flex:1;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-ghost btn-block">🔥 Burn</button>
-          </form>
-        {% endif %}
+      {% if nft.is_burned %}
+      <button class="btn btn-ghost btn-block btn-lg" disabled>This NFT has been burned</button>
+      {% elif nft.is_listed and nft.owner_id != user.id %}
+      <a href="{% url 'nftapp:buy_nft' nft.pk %}" class="btn btn-gradient btn-block btn-lg"
+        style="flex:1; text-align:center;">Buy Now</a>
+      {% if offer_form and not my_offer %}
+      <button type="button" class="btn btn-outline btn-lg" id="toggleOfferFormBtn" style="flex:1;">Make Offer</button>
+      {% endif %}
+      {% elif not nft.is_listed and nft.owner_id != user.id %}
+      <button class="btn btn-ghost btn-block btn-lg" disabled>Not for sale</button>
+      {% if offer_form and not my_offer %}
+      <button type="button" class="btn btn-outline btn-lg" id="toggleOfferFormBtn" style="flex:1;">Make Offer</button>
+      {% endif %}
+      {% elif nft.owner_id == user.id %}
+      <a href="{% url 'nftapp:gift_nft' nft.pk %}" class="btn btn-outline">🎁 Gift</a>
+      <form method="post" action="{% url 'nftapp:burn_nft' nft.pk %}"
+        onsubmit="return confirm('Burn {{ nft.name }} permanently? This cannot be undone.');" style="flex:1;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-block">🔥 Burn</button>
+      </form>
+      {% endif %}
       {% else %}
-        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-gradient btn-block btn-lg">Sign in to Buy</a>
+      <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-gradient btn-block btn-lg">Sign in to
+        Buy</a>
       {% endif %}
     </div>
 
     {% if my_offer %}
-      <div class="token-id-box mt-16">
-        <div class="token-id-label">Your Offer</div>
-        <p class="muted mt-8" style="font-size:0.88rem;">
-          You offered <b>{{ my_offer.amount }} {{ my_offer.currency }}</b>, expires {{ my_offer.expires_at|date:"M j, Y" }}.
-        </p>
-        <form method="post" action="{% url 'nftapp:cancel_offer' my_offer.pk %}" class="mt-8">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-ghost">Cancel Offer</button>
-        </form>
-      </div>
-    {% elif offer_form %}
-      <form method="post" action="{% url 'nftapp:make_offer' nft.pk %}" id="offerForm" class="token-id-box mt-16"
-            style="display:none;" data-wallet-gate>
+    <div class="token-id-box mt-16">
+      <div class="token-id-label">Your Offer</div>
+      <p class="muted mt-8" style="font-size:0.88rem;">
+        You offered <b>{{ my_offer.amount }} {{ my_offer.currency }}</b>, expires {{ my_offer.expires_at|date:"M j, Y"
+        }}.
+      </p>
+      <form method="post" action="{% url 'nftapp:cancel_offer' my_offer.pk %}" class="mt-8">
         {% csrf_token %}
-        <div class="token-id-label">Make an Offer</div>
-        <div class="field-row mt-8">
-          <div class="field" style="flex:1;">
-            <label>Amount</label>
-            {{ offer_form.amount }}
-          </div>
-          <div class="field" style="flex:0 0 110px;">
-            <label>Currency</label>
-            {{ offer_form.currency }}
-          </div>
-          <div class="field" style="flex:0 0 140px;">
-            <label>Expires</label>
-            {{ offer_form.duration_days }}
-          </div>
-        </div>
-        {% if offer_form.errors %}
-          {% for field in offer_form %}{% for err in field.errors %}<div class="error">{{ err }}</div>{% endfor %}{% endfor %}
-        {% endif %}
-        <button type="submit" class="btn btn-gradient mt-8">Submit Offer</button>
+        <button type="submit" class="btn btn-ghost">Cancel Offer</button>
       </form>
+    </div>
+    {% elif offer_form %}
+    <form method="post" action="{% url 'nftapp:make_offer' nft.pk %}" id="offerForm" class="token-id-box mt-16"
+      style="display:none;" data-wallet-gate>
+      {% csrf_token %}
+      <div class="token-id-label">Make an Offer</div>
+      <div class="field-row mt-8">
+        <div class="field" style="flex:1;">
+          <label>Amount</label>
+          {{ offer_form.amount }}
+        </div>
+        <div class="field" style="flex:0 0 110px;">
+          <label>Currency</label>
+          {{ offer_form.currency }}
+        </div>
+        <div class="field" style="flex:0 0 140px;">
+          <label>Expires</label>
+          {{ offer_form.duration_days }}
+        </div>
+      </div>
+      {% if offer_form.errors %}
+      {% for field in offer_form %}{% for err in field.errors %}<div class="error">{{ err }}</div>{% endfor %}{% endfor
+      %}
+      {% endif %}
+      <button type="submit" class="btn btn-gradient mt-8">Submit Offer</button>
+    </form>
     {% endif %}
 
     {% if is_owner and offers %}
-      <div class="token-id-box mt-16">
-        <div class="token-id-label">Offers Received ({{ offers|length }})</div>
-        <div class="offers-list mt-8">
-          {% for o in offers %}
-            <div class="offer-row">
-              <div>
-                <b>{{ o.amount }} {{ o.currency }}</b>
-                <span class="muted" style="font-size:0.78rem;"> by {{ o.bidder.first_name|default:o.bidder.username }} · expires {{ o.expires_at|date:"M j" }}</span>
-              </div>
-              <div style="display:flex; gap:8px;">
-                <form method="post" action="{% url 'nftapp:accept_offer' o.pk %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-gradient" style="padding:6px 14px; font-size:0.82rem;">Accept</button>
-                </form>
-                <form method="post" action="{% url 'nftapp:reject_offer' o.pk %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-ghost" style="padding:6px 14px; font-size:0.82rem;">Decline</button>
-                </form>
-              </div>
-            </div>
-          {% endfor %}
+    <div class="token-id-box mt-16">
+      <div class="token-id-label">Offers Received ({{ offers|length }})</div>
+      <div class="offers-list mt-8">
+        {% for o in offers %}
+        <div class="offer-row">
+          <div>
+            <b>{{ o.amount }} {{ o.currency }}</b>
+            <span class="muted" style="font-size:0.78rem;"> by {{ o.bidder.first_name|default:o.bidder.username }} ·
+              expires {{ o.expires_at|date:"M j" }}</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <form method="post" action="{% url 'nftapp:accept_offer' o.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-gradient"
+                style="padding:6px 14px; font-size:0.82rem;">Accept</button>
+            </form>
+            <form method="post" action="{% url 'nftapp:reject_offer' o.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-ghost" style="padding:6px 14px; font-size:0.82rem;">Decline</button>
+            </form>
+          </div>
         </div>
+        {% endfor %}
       </div>
+    </div>
     {% endif %}
 
     {% if activity %}
-      <div class="token-id-box mt-16">
-        <div class="token-id-label">Activity</div>
-        <div class="activity-list mt-8">
-          {% for tx in activity %}
-            <div class="activity-row">
-              <span class="activity-type activity-{{ tx.tx_type }}">{{ tx.get_tx_type_display }}</span>
-              <span class="muted" style="font-size:0.85rem; flex:1;">{{ tx.note }}</span>
-              <span class="muted" style="font-size:0.78rem;">{{ tx.created_at|date:"M j, Y" }}</span>
-            </div>
-          {% endfor %}
+    <div class="token-id-box mt-16">
+      <div class="token-id-label">Activity</div>
+      <div class="activity-list mt-8">
+        {% for tx in activity %}
+        <div class="activity-row">
+          <span class="activity-type activity-{{ tx.tx_type }}">{{ tx.get_tx_type_display }}</span>
+          <span class="muted" style="font-size:0.85rem; flex:1;">{{ tx.note }}</span>
+          <span class="muted" style="font-size:0.78rem;">{{ tx.created_at|date:"M j, Y" }}</span>
         </div>
+        {% endfor %}
       </div>
+    </div>
     {% endif %}
   </div>
 </div>
@@ -222,52 +242,52 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
 <script src="{% static 'js/web3mint.js' %}"></script>
 <script>
-(function() {
-  const btn = document.getElementById("mintOnChainBtn");
-  const statusEl = document.getElementById("mintOnChainStatus");
-  if (!btn) return;
-  const cfg = JSON.parse('{{ onchain_mint_config_json|escapejs }}');
-  btn.addEventListener("click", () => {
-    btn.disabled = true;
-    mintOnChain(cfg, (msg) => { if (statusEl) statusEl.textContent = msg; })
-      .finally(() => { btn.disabled = false; });
-  });
-})();
+  (function () {
+    const btn = document.getElementById("mintOnChainBtn");
+    const statusEl = document.getElementById("mintOnChainStatus");
+    if (!btn) return;
+    const cfg = JSON.parse('{{ onchain_mint_config_json|escapejs }}');
+    btn.addEventListener("click", () => {
+      btn.disabled = true;
+      mintOnChain(cfg, (msg) => { if (statusEl) statusEl.textContent = msg; })
+        .finally(() => { btn.disabled = false; });
+    });
+  })();
 </script>
 {% endif %}
 <script>
-// Cursor-following zoom on the NFT artwork: hovering scales the image up
-// and pans it so whatever's under the cursor stays centered, like a
-// product-photo magnifier. Disabled on touch/small screens (no hover there
-// anyway — see the matching @media rule in style.css).
-(function(){
-  const frame = document.getElementById("detailImgFrame");
-  const img = document.getElementById("detailImg");
-  if (!frame || !img) return;
-  const ZOOM = 2.2;
-  frame.addEventListener("mousemove", (e) => {
-    const rect = frame.getBoundingClientRect();
-    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
-    img.style.transformOrigin = `${xPct}% ${yPct}%`;
-    img.style.transform = `scale(${ZOOM})`;
-  });
-  frame.addEventListener("mouseleave", () => {
-    img.style.transform = "scale(1)";
-    img.style.transformOrigin = "center center";
-  });
-})();
+  // Cursor-following zoom on the NFT artwork: hovering scales the image up
+  // and pans it so whatever's under the cursor stays centered, like a
+  // product-photo magnifier. Disabled on touch/small screens (no hover there
+  // anyway — see the matching @media rule in style.css).
+  (function () {
+    const frame = document.getElementById("detailImgFrame");
+    const img = document.getElementById("detailImg");
+    if (!frame || !img) return;
+    const ZOOM = 2.2;
+    frame.addEventListener("mousemove", (e) => {
+      const rect = frame.getBoundingClientRect();
+      const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+      img.style.transformOrigin = `${xPct}% ${yPct}%`;
+      img.style.transform = `scale(${ZOOM})`;
+    });
+    frame.addEventListener("mouseleave", () => {
+      img.style.transform = "scale(1)";
+      img.style.transformOrigin = "center center";
+    });
+  })();
 </script>
 <script>
-// Toggle the "Make Offer" panel open/closed.
-(function(){
-  const btn = document.getElementById("toggleOfferFormBtn");
-  const form = document.getElementById("offerForm");
-  if (!btn || !form) return;
-  btn.addEventListener("click", () => {
-    form.style.display = form.style.display === "none" ? "block" : "none";
-    if (form.style.display === "block") form.scrollIntoView({ behavior: "smooth", block: "center" });
-  });
-})();
+  // Toggle the "Make Offer" panel open/closed.
+  (function () {
+    const btn = document.getElementById("toggleOfferFormBtn");
+    const form = document.getElementById("offerForm");
+    if (!btn || !form) return;
+    btn.addEventListener("click", () => {
+      form.style.display = form.style.display === "none" ? "block" : "none";
+      if (form.style.display === "block") form.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  })();
 </script>
 {% endblock %}

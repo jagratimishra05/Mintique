@@ -4,8 +4,7 @@
 {% block content %}
 <div class="detail-grid">
   <div class="detail-img" id="detailImgFrame">
-    <img src="{% if nft.ipfs_image_url %}{{ nft.ipfs_image_url }}{% elif nft.image %}{{ nft.image.url }}{% endif %}"
-      alt="{{ nft.name }}" id="detailImg">
+    <img src="{{ nft.image.url }}" alt="{{ nft.name }}" id="detailImg">
   </div>
   <div class="detail-info">
     <div class="creator-badge-row">

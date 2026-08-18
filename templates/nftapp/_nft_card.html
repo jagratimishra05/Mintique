@@ -11,8 +11,7 @@ wishlisted_ids - optional set of NFT pks the current user has wishlisted
       {% if nft.is_burned %}<span class="badge burned-badge">🔥 Burned</span>
       {% elif nft.is_lazy_minted and not nft.lazy_minted_at %}<span class="badge lazy-badge">⏳ Lazy Mint</span>{% endif
       %}
-      <img src="{% if nft.ipfs_image_url %}{{ nft.ipfs_image_url }}{% elif nft.image %}{{ nft.image.url }}{% endif %}"
-        alt="{{ nft.name }}">
+      <img src="{{ nft.image.url }}" alt="{{ nft.name }}">
     </div>
     <div class="body">
       <div class="row">
@@ -34,4 +33,5 @@ wishlisted_ids - optional set of NFT pks the current user has wishlisted
       {% if nft.pk in wishlisted_ids %}★ Wishlisted{% else %}☆ Wishlist{% endif %}
     </button>
   </form>
+  {% endif %}
 </div>

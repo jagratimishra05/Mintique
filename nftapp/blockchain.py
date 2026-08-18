@@ -115,10 +115,32 @@ def _load_abi(standard="erc721"):
         return None
 
 
+def _inject_poa_middleware(w3):
+    """Polygon (and most non-mainnet-Ethereum chains) are Proof-of-Authority
+    chains: their blocks include an `extraData` field longer than plain
+    Ethereum allows. Without this middleware, web3.py raises an internal
+    parsing error (ExtraDataLengthError) the moment it touches a block or
+    receipt on Polygon — which looks exactly like "transaction not found",
+    even when the transaction actually succeeded on-chain. This must be
+    injected on every Web3 instance that talks to Polygon.
+    """
+    try:
+        from web3.middleware import ExtraDataToPOAMiddleware
+        w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+    except ImportError:
+        try:
+            # Older web3.py releases used this name instead.
+            from web3.middleware import geth_poa_middleware
+            w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        except ImportError:
+            logger.warning("blockchain: could not import POA middleware; Polygon reads may fail")
+    return w3
+
+
 def get_web3():
     if not web3_enabled():
         return None
-    return Web3(Web3.HTTPProvider(settings.POLYGON_RPC_URL))
+    return _inject_poa_middleware(Web3(Web3.HTTPProvider(settings.POLYGON_RPC_URL)))
 
 
 def get_web3_readonly():
@@ -131,7 +153,7 @@ def get_web3_readonly():
     """
     if Web3 is None:
         return None
-    return Web3(Web3.HTTPProvider(settings.POLYGON_RPC_URL))
+    return _inject_poa_middleware(Web3(Web3.HTTPProvider(settings.POLYGON_RPC_URL)))
 
 
 def get_native_balance(address):

@@ -1,156 +1,284 @@
-# Mintique — NFT Minting, Marketplace & Swap Platform
+# ✨ Mintique — Mint. Verify. Own.
 
-A full-stack Django project: server-rendered HTML/CSS/JS frontend (Django templates —
-no separate React build needed), with real authentication, a wallet-gated minting
-flow, a marketplace, and a built-in ETH ⇄ MNQ token swap.
+### A Digital NFT Minting & Authentication Platform
 
-## Stack
+<p align="center">
+  <strong>Create unique digital assets. Manage NFT collections. Explore digital ownership.</strong>
+</p>
 
-- **Backend:** Python 3, Django 5/6
-- **Database:** SQLite (swap `DATABASES` in `mintique/settings.py` for Postgres/MySQL in production)
-- **Frontend:** Django Templates + vanilla CSS/JS (dark "Mintique" theme, no build step)
-- **Images:** Pillow (for uploaded artwork + demo seed images)
+<p align="center">
+  <img src="https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Backend-Django-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django" />
+  <img src="https://img.shields.io/badge/Language-Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Blockchain-NFT%20Concepts-8247E5?style=for-the-badge" alt="Blockchain concepts" />
+</p>
 
-## Project layout
+---
 
+## 📖 About the Project
+
+**Mintique** is a web-based NFT platform designed to bring digital creation, token uniqueness, authentication, and asset management together in one place.
+
+The platform is intended for digital artists, creators, and collectors who want to create digital assets, associate them with unique token identifiers, verify asset information, and manage their collections through an intuitive interface.
+
+Mintique focuses on an important question in digital ownership:
+
+**How can a digital asset be identified and distinguished from other assets?**
+
+The project explores techniques such as unique token identifiers and content fingerprinting, alongside blockchain concepts, to support asset identification and authenticity verification.
+
+> **Project motto:** Mint. Verify. Own.
+
+## 🎯 Project Objectives
+
+- Build a user-friendly platform for digital asset creation and NFT management.
+- Provide user registration, login, and account management.
+- Support digital artwork uploads and NFT creation workflows.
+- Explore unique token identification and duplicate-content detection.
+- Provide a verification interface for inspecting NFT and asset information.
+- Organize created assets into collections and user dashboards.
+- Explore wallet integration and blockchain-based ownership concepts.
+- Develop a modular full-stack application with a responsive interface.
+
+## ✨ Key Features
+
+### 🎨 1. Digital Asset Creation
+Upload digital artwork and provide the information required to create an NFT.
+
+### 🪙 2. NFT Minting
+Explore the minting workflow, including token identification and the association of digital assets with NFT records.
+
+### 🔍 3. NFT Verification
+Provide a dedicated verification workflow to inspect an NFT's identifier and available asset information.
+
+### 🛡️ 4. Uniqueness and Duplicate Detection
+Explore content fingerprints or hashes to identify identical digital files and help prevent duplicate asset registration.
+
+**Important distinction:** A content hash can identify identical file content, but it does not automatically establish copyright, prove that an asset is globally unique, or prevent every form of duplicate NFT creation.
+
+### 👛 5. Wallet Integration
+Design the wallet connection workflow to support blockchain-related actions. Browsing the application should not require connecting a wallet; wallet connection is intended to be required when performing minting actions that need it.
+
+### 🖼️ 6. NFT Collections and Marketplace
+Organize digital assets into collections and provide a foundation for marketplace listings and purchase or sale workflows.
+
+### 📊 7. User Dashboard
+Provide a central place to view a user's assets, NFTs, collections, and related activity.
+
+### 🎨 8. Modern User Interface
+Use a dark visual theme, gradient accents, responsive layouts, and reusable interface components to create a polished digital-asset experience.
+
+*Feature note: The descriptions above capture the project scope. Actual availability depends on the functionality implemented and configured in the current repository.*
+
+## 🔄 How Mintique Works
+
+The intended user journey is:
+
+```mermaid
+flowchart TD
+    A[Create Account or Log In] --> B[Explore the Platform]
+    B --> C[Upload Digital Asset]
+    C --> D[Enter Asset Metadata]
+    D --> E[Check Asset Fingerprint]
+    E --> F{Duplicate Detected?}
+    F -->|Yes| G[Review Existing Asset]
+    F -->|No| H[Prepare NFT]
+    H --> I[Connect Wallet if Required]
+    I --> J[Mint NFT]
+    J --> K[Record Token Information]
+    K --> L[View Dashboard or Collection]
+    L --> M[Verify Asset]
 ```
-mintique/
-├── manage.py
-├── requirements.txt
-├── mintique/              # project settings/urls/wsgi/asgi
-├── accounts/              # custom User model, register/login/profile, brute-force throttle
-│   ├── models.py          # User (email/google/wallet auth_provider), LoginAttempt
-│   ├── forms.py           # RegisterForm, EmailLoginForm, WalletAuthForm, ProfileForm
-│   ├── views.py           # email + Google OAuth + wallet login, password reset, email verify
-│   ├── urls.py
-│   ├── context_processors.py   # exposes google/walletconnect config to templates
-│   ├── middleware.py      # simple login rate-limiter
-│   └── admin.py
-├── nftapp/                # NFTs: mint, marketplace, detail, likes, buy
-│   ├── models.py          # NFT (auto-generates MNQ-XXXX token IDs + content hash), Like
-│   ├── forms.py           # MintNFTForm, MarketplaceFilterForm
-│   ├── views.py           # dashboard, mint (wallet-gated), marketplace, detail, buy, collection
-│   ├── management/commands/seed_demo.py   # `python manage.py seed_demo`
-│   └── admin.py
-├── walletapp/             # internal ledger wallet, token swap, transaction history
-│   ├── models.py          # Wallet (ETH + MNQ balances), Transaction
-│   ├── forms.py           # SwapForm, ConnectWalletForm
-│   ├── views.py           # connect/disconnect wallet, swap, transaction history
-│   ├── context_processors.py   # exposes wallet balance in the navbar everywhere
-│   └── admin.py
-├── templates/
-│   ├── base.html          # navbar, toasts, footer — extended by every page
-│   ├── home.html
-│   ├── accounts/{login,register,profile}.html
-│   ├── accounts/{forgot_password,password_reset_sent,password_reset_confirm,password_reset_complete}.html
-│   ├── accounts/{verify_email_pending,_wallet_auth_modal}.html
-│   ├── nftapp/{dashboard,mint,marketplace,nft_detail,my_collection}.html
-│   └── walletapp/{swap,transactions,_wallet_modal}.html
-└── static/
-    ├── css/style.css      # entire design system (tokens, buttons, cards, forms, modal…)
-    └── js/{main,wallet,auth,swap}.js
+
+This is the intended workflow, not a claim that every step is currently connected end-to-end.
+
+## 🏗️ System Architecture
+
+Mintique is organized around a frontend, backend, data layer, and blockchain-related workflows.
+
+| Layer | Technology / Responsibility |
+|---|---|
+| Frontend | React, TypeScript, Vite, HTML, CSS, and JavaScript |
+| Backend | Django and Django REST Framework architecture |
+| Authentication | User account and login workflows |
+| Data layer | Supabase-related project files and Django application models |
+| NFT module | Asset creation, token information, and NFT management |
+| Marketplace module | Listings and marketplace-related workflows |
+| Wallet module | Wallet connection and blockchain interaction workflows |
+| Verification module | Asset lookup and authenticity-related checks |
+
+### Architecture note
+
+The current project snapshot contains both React/Supabase-related files and a Django project structure. These should be treated as separate or evolving parts until the active application flow is confirmed. Document the backend that actually serves your running frontend rather than assuming both are connected.
+
+## 🛠️ Technology Stack
+
+**Frontend**
+- React
+- TypeScript
+- Vite
+- HTML5 and CSS3
+- JavaScript
+
+**Backend**
+- Python
+- Django
+- Django REST Framework, where configured
+
+**Data and Authentication**
+- Supabase-related project configuration
+- Django models and authentication, where configured
+
+**Blockchain Concepts**
+- NFT token identification
+- Content hashing and duplicate detection
+- Wallet integration
+- Smart-contract-based minting concepts
+
+*Technologies listed under blockchain concepts are areas explored by the project; they do not imply that a deployed smart contract or live blockchain transaction is present.*
+
+## 📂 Project Structure
+
+The saved project snapshot contains a React frontend and a Django application structure. The following is a simplified overview of the main areas:
+
+```text
+mintique-nft/
+├── src/
+│   ├── components/       # Reusable UI components
+│   ├── contexts/         # Shared frontend state
+│   ├── lib/              # Shared utilities and integrations
+│   └── pages/            # Frontend pages
+│
+├── supabase/
+│   └── migrations/       # Database migration files
+│
+├── mintique/
+│   ├── accounts/         # User accounts
+│   ├── nft/              # NFT-related functionality
+│   ├── marketplace/      # Marketplace functionality
+│   ├── dashboard/        # Dashboard functionality
+│   ├── wallet/           # Wallet-related functionality
+│   ├── templates/        # Django HTML templates
+│   ├── static/           # Static assets
+│   └── manage.py         # Django management entry point
+│
+├── index.html
+├── package.json
+└── README.md
 ```
 
-## Setup
+The exact location of `manage.py`, backend configuration, and other files may differ in your current checkout. This overview reflects the saved project layout rather than a verified final production structure.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Git
+- Node.js and npm
+- Python 3
+- A suitable Python virtual environment
+- Backend and database credentials for whichever services the active application uses
+
+### 1. Clone the repository
 
 ```bash
-python -m venv venv
-source venv/bin/activate            # venv\Scripts\activate on Windows
-pip install -r requirements.txt
-
-python manage.py migrate
-python manage.py createsuperuser    # for /admin/
-python manage.py seed_demo          # optional: populates 6 demo NFTs + a demo creator
-python manage.py runserver
+git clone <YOUR_MINTIQUE_REPOSITORY_URL>
+cd mintique-nft
 ```
 
-Visit `http://127.0.0.1:8000/`.
+Replace the placeholder with your actual GitHub repository URL.
 
-Demo login created by `seed_demo`: **demo@mintique.io / DemoPass123!**
+### 2. Install frontend dependencies
 
-## Feature overview
+From the directory containing `package.json`, run:
 
-### Authentication & accounts
-- Custom `User` model, email as the login identifier (not username)
-- **Four sign-in methods, all working end-to-end:**
-  - **Email/password** — registration with password confirmation + Django's
-    built-in password validators (min length, common-password check,
-    similarity check, all-numeric check)
-  - **Google OAuth** — standard authorization-code flow (`accounts/views.py`:
-    `google_login_view` / `google_callback_view`). Configure
-    `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` env vars (redirect URI:
-    `<domain>/accounts/google/callback/`); the button shows a clear
-    "not configured yet" message instead of failing silently if unset.
-  - **MetaMask** — real `window.ethereum` browser-wallet connection; first
-    connect auto-creates an account tied to that address
-  - **WalletConnect** — same login flow; falls back to the built-in demo
-    wallet if `WALLETCONNECT_PROJECT_ID` isn't set, so the flow is always
-    testable without external credentials
-- **Forgot / reset password** — Django's built-in token-based reset flow with
-  dark-themed templates (`accounts/forgot_password.html` → email → 
-  `password_reset_confirm.html` → done)
-- **Verify email** — every new email/password account gets a verification
-  link; `/accounts/verify-email/` shows status + a resend button, and a
-  dismissible banner nudges unverified users site-wide
-- Login/logout, "welcome back" toast messages
-- Simple brute-force throttle (`accounts/middleware.py`): 5 failed attempts on one
-  email within 10 minutes blocks further tries — swap for `django-axes` in production
-- Editable profile (name, bio, avatar)
-- Session/CSRF hardening in `settings.py` (HttpOnly, SameSite, HSTS in production, etc.)
-
-**New environment variables** (all optional — features degrade gracefully when unset):
-```
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-WALLETCONNECT_PROJECT_ID=
+```bash
+npm install
 ```
 
-### Dashboard
-- Available immediately after login — **no wallet required** to view it
-- Live stats: NFTs minted, total earnings, listed items, collectors
-- Recent NFTs + recent transaction activity
+### 3. Configure environment variables
 
-### Minting — wallet-gated
-- Wallet connection is **only requested at the moment you try to mint or buy**,
-  never at registration/login/browsing
-- `static/js/wallet.js` intercepts the mint/buy form submit and opens a connect
-  modal with three options: real browser wallet (MetaMask `window.ethereum`),
-  a one-click demo wallet (for reviewers without an extension installed), or
-  manual address entry
-- Server-side, `nftapp.views.wallet_required` is a safety net that re-checks the
-  wallet on POST even if JS were bypassed
-- On mint: drag-and-drop upload with live preview, client + server-side file
-  type/size validation, auto-generated unique `MNQ-XXXX-XXXX-XXXX-XXXX` token ID
-  and a SHA-256 content hash simulating the "cryptographic hashing" step
+Review the project's environment configuration and provide the required credentials for any active integrations.
 
-### Marketplace
-- Search, category filter, sort (newest / price / most liked), pagination
-- NFT detail page: like/unlike, buy now (wallet-gated), ownership transfer on
-  purchase, "sold" vs "listed" state
+Do not commit API keys, passwords, database credentials, or private wallet keys to GitHub.
 
-### Wallet & token swap
-- Every user gets an internal ledger `Wallet` (simulated ETH balance + platform
-  MNQ token balance) — new users get a starter MNQ bonus to try swapping right away
-- Swap widget: type an amount, live-estimated conversion (JS), fixed demo rate
-  + platform fee (both configurable in `settings.py`), swap direction toggle
-- All mints/buys/sells/swaps/wallet-connects are logged to `Transaction` with a
-  fake but unique `tx_hash`, visible in the dashboard and a full history page
+### 4. Start the frontend
 
-### Security notes / what's simulated vs. real
-- Wallet connections and ETH/MNQ balances are an **internal ledger**, not a real
-  blockchain — this keeps the whole flow runnable without a live Web3 provider,
-  gas fees, or a deployed smart contract. Swapping in `web3.py` + a real contract
-  is a drop-in replacement for `walletapp/models.py` + `views.py` once you're
-  ready to go on-chain.
-- Email is sent via Django's console backend in dev — point `EMAIL_BACKEND` at
-  SMTP/SES/SendGrid for real delivery (e.g. verification emails).
-- The login throttle is DB-backed for portability; use Redis + `django-axes`
-  or `django-ratelimit` for production-grade protection.
+For the Vite-based frontend, run:
 
-## Suggested next steps for production
-- Real email verification gate before allowing minting
-- 2FA (field already on the User model: `two_factor_enabled`)
-- Real Web3 integration (web3.py) + smart contract for on-chain minting
-- Object storage (S3) for `MEDIA_ROOT` instead of local disk
-- Postgres + Redis (cache/rate-limit) instead of SQLite
-- Celery for async email/notification sending
+```bash
+npm run dev
+```
+
+Open the local URL printed by Vite in your terminal.
+
+### 5. Start the backend, if required
+
+If the Django backend is part of your active application, enter the directory containing `manage.py`, activate your virtual environment, and install the backend dependencies from the project's requirements file.
+
+Then run:
+
+```bash
+python3 manage.py migrate
+python3 manage.py runserver
+```
+
+The exact directory, dependency file, database configuration, and environment variables must match your current checkout. Frontend and backend startup commands alone do not guarantee that all integrations are operational.
+
+## 🧠 What I Learned
+
+This project provides an opportunity to practise:
+
+- Full-stack application organization.
+- Building reusable frontend components.
+- Connecting frontend interfaces to backend APIs.
+- User authentication and session workflows.
+- Digital asset handling and metadata management.
+- Hashing concepts and duplicate-content detection.
+- NFT token identification and verification concepts.
+- Wallet integration and blockchain interaction fundamentals.
+- Separating application responsibilities into modules.
+- Debugging configuration and integration issues.
+
+## 📌 Important Concepts to Remember
+
+| Concept | Quick Revision |
+|---|---|
+| NFT | A token representing a particular digital or other asset within a token system |
+| Token ID | An identifier for a token within its relevant contract or token system |
+| Content hash | A fingerprint calculated from file content |
+| Blockchain | A distributed ledger that records transactions and state changes |
+| Wallet | A tool for managing blockchain accounts and authorizing transactions |
+| Smart contract | Code deployed on a blockchain that enforces programmed rules |
+| Metadata | Information describing an asset, such as its name, description, and media reference |
+| Authentication | Verifying a user's identity |
+| REST API | An interface that lets software components communicate over HTTP |
+
+**Interview reminder:** Be ready to explain how Mintique identifies duplicate files, how token identifiers differ from file hashes, how a wallet authorizes a transaction, and which parts of your application currently rely on a database versus an actual blockchain.
+
+## 🔮 Future Enhancements
+
+Potential enhancements, subject to the project's scope, include:
+
+- Integrating a deployed NFT smart contract.
+- Storing media and metadata using IPFS.
+- Recording on-chain token IDs and transaction hashes.
+- Adding automated tests for authentication, minting, and verification.
+- Strengthening duplicate detection and verification workflows.
+- Improving error handling and transaction status feedback.
+- Deploying the frontend and backend with secure configuration.
+
+These are future possibilities, not claims of existing functionality.
+
+## 👩‍💻 Author
+
+**Jagrati Mishra**
+
+- GitHub: [@jagratimishra05](https://github.com/jagratimishra05)
+
+---
+
+<p align="center">
+  <strong>Mintique — Mint. Verify. Own.</strong><br />
+  <em>Exploring digital ownership through full-stack development and blockchain concepts.</em>
+</p>
